@@ -3,7 +3,7 @@
 
 #include "tester.h"
 
-#define __DEBUG__ (0)
+#define __DEBUG__ (1)
 
 using namespace std;
 #if (__DEBUG__ == 1)
@@ -20,9 +20,10 @@ int main()
 	{
 		string command;
 		cin >> command;
-		cout << command << endl;
 		if (command == "read")
 			operation = new Read;
+		else if (command == "help")
+			operation = new Help;
 		else
 			continue;
 		operation->run(command);

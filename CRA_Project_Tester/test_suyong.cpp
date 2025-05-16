@@ -1,0 +1,26 @@
+#include "gmock/gmock.h"
+#include <string>
+#include "tester.h"
+using namespace std;
+TEST(Help, operationtest)
+{
+	std::stringstream buffer;
+	std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+
+	Help help;
+	
+	std::string expectResult;
+	expectResult = "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민\n";
+	expectResult.append("How to use CMD\n");
+	expectResult.append("read (address) : (address)의 데이터를 읽음\n");
+	expectResult.append("write (address) (data) : (address)에 (data)를 씀\n");
+	expectResult.append("fullread : 모든 데이터를 읽음\n");
+	expectResult.append("fullwrite (data) : 모든 주소에 (data)를 씀\n");
+	expectResult.append("exit : 종료\n");
+	expectResult.append("help : 도움말\n");
+	
+	help.run("s");
+	std::cout.rdbuf(old);
+	std::string output = buffer.str();
+	EXPECT_EQ(expectResult, output);
+}
