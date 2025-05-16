@@ -27,6 +27,9 @@
     <ClCompile Include="test_run.cpp">
       <Filter>테스트</Filter>
     </ClCompile>
+    <ClCompile Include="test_suyong.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tester.h">
