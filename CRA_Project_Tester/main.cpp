@@ -32,7 +32,7 @@ int main()
 			operation = new Help;
 		else
 			continue;
-		operation->run(param1,param2);
+		operation->run(param1, param2);
 	}
 	return 0;
 }
