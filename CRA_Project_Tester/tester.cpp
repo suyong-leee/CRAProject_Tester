@@ -1,6 +1,6 @@
 #include "tester.h"
 
-void SSDTest::run(string command)
+void SSDTest::run(string command1, string command2)
 {
 }
 

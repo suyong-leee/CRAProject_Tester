@@ -37,7 +37,7 @@ public:
 		cout << "exit : 종료" << endl;
 		cout << "help : 도움말" << endl;
 	}
-
+};
 class Write : public ITestOperation
 {
 public:
