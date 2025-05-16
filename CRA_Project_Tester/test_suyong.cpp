@@ -1,4 +1,4 @@
-#include "gmock/gmock.h"
+ï»¿#include "gmock/gmock.h"
 #include <string>
 #include "tester.h"
 using namespace std;
@@ -10,14 +10,14 @@ TEST(Help, operationtest)
 	Help help;
 	
 	std::string expectResult;
-	expectResult = "Team Approve : °í¾Æ¶ó ÀÌµ¿°Ç ÀÌ¼­¿µ ÀÌ¼ö¿ë ÀÌ¿ëÇÑ ÇÑ»ó¹Î\n";
+	expectResult = "Team Approve : ê³ ì•„ë¼ ì´ë™ê±´ ì´ì„œì˜ ì´ìˆ˜ìš© ì´ìš©í•œ í•œìƒë¯¼\n";
 	expectResult.append("How to use CMD\n");
-	expectResult.append("read (address) : (address)ÀÇ µ¥ÀÌÅÍ¸¦ ÀĞÀ½\n");
-	expectResult.append("write (address) (data) : (address)¿¡ (data)¸¦ ¾¸\n");
-	expectResult.append("fullread : ¸ğµç µ¥ÀÌÅÍ¸¦ ÀĞÀ½\n");
-	expectResult.append("fullwrite (data) : ¸ğµç ÁÖ¼Ò¿¡ (data)¸¦ ¾¸\n");
-	expectResult.append("exit : Á¾·á\n");
-	expectResult.append("help : µµ¿ò¸»\n");
+	expectResult.append("read (address) : (address)ì˜ ë°ì´í„°ë¥¼ ì½ìŒ\n");
+	expectResult.append("write (address) (data) : (address)ì— (data)ë¥¼ ì”€\n");
+	expectResult.append("fullread : ëª¨ë“  ë°ì´í„°ë¥¼ ì½ìŒ\n");
+	expectResult.append("fullwrite (data) : ëª¨ë“  ì£¼ì†Œì— (data)ë¥¼ ì”€\n");
+	expectResult.append("exit : ì¢…ë£Œ\n");
+	expectResult.append("help : ë„ì›€ë§\n");
 	
 	help.run();
 	std::cout.rdbuf(old);
