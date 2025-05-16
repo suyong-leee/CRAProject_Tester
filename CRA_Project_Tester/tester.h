@@ -20,7 +20,7 @@ public:
 class Help : public ITestOperation
 {
 public:
-	void run(string command)
+	void run(string command1 = "", string command2 = "")
 	{
 		cout << "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민" << endl;
 		cout << "How to use CMD" << endl;

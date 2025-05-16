@@ -19,7 +19,7 @@ TEST(Help, operationtest)
 	expectResult.append("exit : 종료\n");
 	expectResult.append("help : 도움말\n");
 	
-	help.run("s");
+	help.run();
 	std::cout.rdbuf(old);
 	std::string output = buffer.str();
 	EXPECT_EQ(expectResult, output);
