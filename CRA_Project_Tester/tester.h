@@ -4,16 +4,18 @@ using namespace std;
 class ITestOperation
 {
 public:
-	virtual void run(string command = "",string command2 = "") = 0;
+	virtual string run(string command = "",string command2 = "") = 0;
 };
 
 //example
 class Read : public ITestOperation
 {
 public:
-	void run(string command1 = "",string command2 = "") override
+
+	string run(string command1 = "",string command2 = "") override
 	{
-		cout << "read" << command1 << command2 <<endl;
+		cout << "read" << command1 <<endl;
+		return "hello read";
 	}
 	string read(string address)
 	{
@@ -59,5 +61,5 @@ private:
 	void FullWriteAndReadCompare();
 	void PartialLBAWrite();
 	void WriteReadAging();
-
 };
+
