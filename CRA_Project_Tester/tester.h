@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <iostream>
 using namespace std;
 class ITestOperation
@@ -22,13 +22,34 @@ class Help : public ITestOperation
 public:
 	void run(string command1 = "", string command2 = "")
 	{
-		cout << "Team Approve : °í¾Æ¶ó ÀÌµ¿°Ç ÀÌ¼­¿µ ÀÌ¼ö¿ë ÀÌ¿ëÇÑ ÇÑ»ó¹Î" << endl;
+		cout << "Team Approve : ï¿½ï¿½ï¿½Æ¶ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½Ì¿ï¿½ï¿½ï¿½ ï¿½Ñ»ï¿½ï¿½" << endl;
 		cout << "How to use CMD" << endl;
-		cout << "read (address) : (address)ÀÇ µ¥ÀÌÅÍ¸¦ ÀÐÀ½" << endl;
-		cout << "write (address) (data) : (address)¿¡ (data)¸¦ ¾¸"<< endl;
-		cout << "fullread : ¸ðµç µ¥ÀÌÅÍ¸¦ ÀÐÀ½" << endl;
-		cout << "fullwrite (data) : ¸ðµç ÁÖ¼Ò¿¡ (data)¸¦ ¾¸" << endl;
-		cout << "exit : Á¾·á" << endl;
-		cout << "help : µµ¿ò¸»" << endl;
+		cout << "read (address) : (address)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½" << endl;
+		cout << "write (address) (data) : (address)ï¿½ï¿½ (data)ï¿½ï¿½ ï¿½ï¿½"<< endl;
+		cout << "fullread : ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½" << endl;
+		cout << "fullwrite (data) : ï¿½ï¿½ï¿½ ï¿½Ö¼Ò¿ï¿½ (data)ï¿½ï¿½ ï¿½ï¿½" << endl;
+		cout << "exit : ï¿½ï¿½ï¿½ï¿½" << endl;
+		cout << "help : ï¿½ï¿½ï¿½ï¿½" << endl;
 	}
+
+class Write : public ITestOperation
+{
+public:
+	void run(string command)
+	{
+		cout << "write" << command << endl;
+	}
+};
+
+class SSDTest :public ITestOperation
+{
+public:
+
+	// ITestOperationì„(ë¥¼) í†µí•´ ìƒì†ë¨
+	void run(string command) override;
+private:
+	void FullWriteAndReadCompare();
+	void PartialLBAWrite();
+	void WriteReadAging();
+
 };
