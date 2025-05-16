@@ -18,3 +18,24 @@ public:
 	}
 };
 
+class Write : public ITestOperation
+{
+public:
+	void run(string command)
+	{
+		cout << "write" << command << endl;
+	}
+};
+
+class SSDTest :public ITestOperation
+{
+public:
+
+	// ITestOperation을(를) 통해 상속됨
+	void run(string command) override;
+private:
+	void FullWriteAndReadCompare();
+	void PartialLBAWrite();
+	void WriteReadAging();
+};
+
