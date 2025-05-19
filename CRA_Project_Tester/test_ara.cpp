@@ -37,6 +37,32 @@ TEST(SDDTEST, PartialLBAWrite)
 	test.run("", "");
 }
 
+TEST(SDDTEST, PartialLBAWrite_exception)
+{
+	MockWrite mkwr;
+	MockRead mkrd;
+	SSDTest_PartialLBAWrite test(&mkwr, &mkrd);
+
+	EXPECT_CALL(mkwr, run("4", "0x12345678"));
+	EXPECT_CALL(mkwr, run("0", "0x12345678"));
+	EXPECT_CALL(mkwr, run("3", "0x12345678"));
+	EXPECT_CALL(mkwr, run("2", "0x12345678"));
+	EXPECT_CALL(mkwr, run("1", "0x12345678"));
+
+	EXPECT_CALL(mkrd, read("0"))
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("1"))
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("2"))
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("3"))
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("4"))
+		.WillRepeatedly(Return(string("0x11111111")));
+
+	EXPECT_THROW(test.run("", ""), exception);
+}
+
 TEST(SDDTEST, WriteReadAging)
 {
 	MockWrite mkwr;
