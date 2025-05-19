@@ -90,9 +90,9 @@ public:
 
 	bool checkAddress(string address)
 	{
-		if (address.size() > 2)
+		if (address.size() > 2 || address.size() == 0)
 		{
-			throw invalid_argument("3자리 이상 불가.");
+			throw invalid_argument("0~99 사이만 가능.");
 		}
 		for (int i = 0; i < address.size(); i++)
 		{

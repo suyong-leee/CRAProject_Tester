@@ -248,3 +248,14 @@ TEST(Testwrite, InvalidWrite)
 
     writer.run(address, data);
 }
+
+TEST(Testwrite, InvalidWrite2)
+{
+    MockWriter writer;
+    string address = "";
+    string data = "0xAAAAAG";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(0);
+
+    writer.run(address, data);
+}
