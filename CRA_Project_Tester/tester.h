@@ -34,19 +34,8 @@ public:
 
     void run(string command1 = "",string command2 = "") override
     {
-        try
-        {
-            if (checkCMD(command1))
-            {
-		string result = read(command1);
-		if (command1.size() == 1) command1 = "0" + command1;
-                cout << "[Read] LBA " << command1 << " : " << result << endl;
-            }
-        }
-        catch (invalid_argument& e)
-        {
-            cout << "error message : " << e.what() << endl;
-        }
+       
+		 read(command1);
 
         return;
 
@@ -54,6 +43,37 @@ public:
 
     virtual string read(string address)
     {
+
+		string result;
+
+		try
+		{
+			if (checkCMD(address))
+			{
+				string command = "ssd.exe R " + address;
+				string result;
+
+				// _popen으로 ssd.exe 실행
+				FILE* pipe = _popen(command.c_str(), "r");
+				if (!pipe) {
+					return "error: cannot open pipe";
+				}
+
+				char buffer[128];
+				while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+					result += buffer;
+				}
+
+				_pclose(pipe);
+
+				if (address.size() == 1) address = "0" + address;
+				cout << "[Read] LBA " << address << " : " << result << endl;
+			}
+		}
+		catch (invalid_argument& e)
+		{
+			cout << "error message : " << e.what() << endl;
+		}
 	return "error";
     }
 
