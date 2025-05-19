@@ -66,10 +66,23 @@ private:
 class TestRun
 {
 public:
+	enum operatorOrder
+	{
+		OPERATOR_WRTIE = 0,
+		OPERATOR_READ,
+		OPERATOR_EXIT,
+		OPERATOR_HELP,
+		OPERATOR_FULLWRITE,
+		OPERATOR_FULLREAD,
+
+		SCENARIO_1,
+		SCENARIO_2,
+		SCENARIO_3,
+	};
 	TestRun()
 	{
-		operators[0] = new Read;
-		operators[1] = new Help;
+		operators[OPERATOR_READ] = new Read;
+		operators[OPERATOR_HELP] = new Help;
 	}
 	bool RunCommand()
 	{
@@ -82,11 +95,11 @@ public:
 		if (command == "read") 
 		{
 			param1 = getInput();
-			currentOperation = getOperator(0);
+			currentOperation = getOperator(OPERATOR_READ);
 		}
 		else if (command == "help")
 		{
-			currentOperation = getOperator(1);
+			currentOperation = getOperator(OPERATOR_HELP);
 		}
 		else if (command == "exit")
 		{
