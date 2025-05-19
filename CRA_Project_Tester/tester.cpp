@@ -1,17 +1,18 @@
-#include "tester.h"
-
-void SSDTest::run(string command1, string command2)
+﻿#include "tester.h"
+void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 {
+	write->run("", "");
+	write->run("", "");
+	write->run("", "");
+	write->run("", "");
+
+	read->run("");
+	read->run("");
+	read->run("");
+	read->run("");
+
 }
 
-void SSDTest::FullWriteAndReadCompare()
-{
-}
-
-void SSDTest::PartialLBAWrite()
-{
-}
-
-void SSDTest::WriteReadAging()
+void SSDTest_PartialLBAWrite::run(string param1, string param2)
 {
 }
