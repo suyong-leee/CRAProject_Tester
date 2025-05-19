@@ -47,7 +47,7 @@ public:
 		{
 			if (checkCMD(address))
 			{
-				string command = "CRAProject_SSD.exe R " + address;
+				string command = "ssd.exe R " + address;
 				string result;
 
 				FILE* pipe = _popen(command.c_str(), "r");
