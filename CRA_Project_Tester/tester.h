@@ -68,16 +68,23 @@ class TestRun
 public:
 	enum operatorOrder
 	{
+		
 		OPERATOR_WRITE = 0,
+		OPERATOR_FULLWRITE,
+		PARAM_TWO = OPERATOR_FULLWRITE,
+
 		OPERATOR_READ,
+		OPERATOR_FULLREAD,
+		PARAM_ONE = OPERATOR_FULLREAD,
+
 		OPERATOR_EXIT,
 		OPERATOR_HELP,
-		OPERATOR_FULLWRITE,
-		OPERATOR_FULLREAD,
 
 		SCENARIO_1,
 		SCENARIO_2,
 		SCENARIO_3,
+		NUM_OF_OPERATOR,
+		PARAM_ZERO = NUM_OF_OPERATOR,
 	};
 	TestRun()
 	{
@@ -86,37 +93,26 @@ public:
 	}
 	bool RunCommand()
 	{
-		string command, param1, param2;
 
-		command = getInput();
-		param1 = "";
-		param2 = "";
-		cout << command << endl;
-		if (command == "read") 
-		{
-			param1 = getInput();
-			currentOperation = getOperator(OPERATOR_READ);
-		}
-		else if (command == "help")
-		{
-			currentOperation = getOperator(OPERATOR_HELP);
-		}
-		else if (command == "write")
-		{
-			param1 = getInput();
-			param2 = getInput();
-			currentOperation = getOperator(OPERATOR_WRITE);
-		}
-		else if (command == "exit")
-		{
-			return false;
-		}
-		else
+		int operationOrder = getOperationNumber(getInput());
+
+		if (operationOrder == -1)
 		{
 			cout << "INVALID COMMAND" << endl;
 			return true;
 		}
-		currentOperation->run(param1, param2);
+		
+		if (operationOrder == OPERATOR_EXIT)
+		{
+			return false;
+		}
+
+		getParameters(operationOrder);
+
+		currentOperation = getOperator(operationOrder);
+
+		currentOperation->run(parameter[0], parameter[1]);
+		
 		return true;
 	}
 
@@ -132,5 +128,37 @@ public:
 	}
 private:
 	ITestOperation* currentOperation = nullptr;
-	ITestOperation* operators[10] = {nullptr,};
+	ITestOperation* operators[NUM_OF_OPERATOR] = {nullptr,};
+	string parameter[2] = {"",};
+
+	int getOperationNumber(const string& command)
+	{
+		if (command == "read") return OPERATOR_READ;
+		else if (command == "write") return OPERATOR_WRITE;
+		else if (command == "help") return OPERATOR_HELP;
+		else if (command == "exit") return OPERATOR_EXIT;
+		else if (command == "fullwrite") return OPERATOR_FULLWRITE;
+		else if (command == "fullread") return OPERATOR_FULLREAD;
+		else return -1;
+	}
+
+	void getParameters(int operationOrder)
+	{
+		if (operationOrder <= PARAM_TWO)
+		{
+			parameter[0] = getInput();
+			parameter[1] = getInput();
+		}
+		else if (operationOrder <= PARAM_ONE)
+		{
+			parameter[0] = getInput();
+			parameter[1] = "";
+		}
+		else
+		{
+			parameter[0] = "";
+			parameter[1] = "";
+		}
+		return;
+	}
 };
