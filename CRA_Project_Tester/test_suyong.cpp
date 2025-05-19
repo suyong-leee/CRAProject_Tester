@@ -17,6 +17,26 @@ public:
     MOCK_METHOD(ITestOperation*, getOperator, (int), (override));
 };
 
+TEST(mainfunction, InvalidCommand)
+{
+    std::stringstream buffer;
+    std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+
+    MockTestRun runner;
+    MockOperator mockOperator;
+    EXPECT_CALL(runner, getInput())
+        .Times(1)
+        .WillOnce(Return("full"));
+
+
+    EXPECT_EQ(true, runner.RunCommand());
+    std::cout.rdbuf(old);
+    std::string output = buffer.str();
+    std::string expectResult = "INVALID COMMAND\n";
+    EXPECT_EQ(expectResult, output);
+}
+
+
 TEST(mainfunction,exit)
 {
     MockTestRun runner;
@@ -44,6 +64,25 @@ TEST(mainfunction, read)
         .Times(1);
 
     EXPECT_EQ(true,runner.RunCommand());
+}
+
+TEST(mainfunction, fullread)
+{
+    MockTestRun runner;
+    MockOperator mockOperator;
+    EXPECT_CALL(runner, getInput())
+        .Times(2)
+        .WillOnce(Return("fullread"))
+        .WillOnce(Return("0xa"));
+
+    EXPECT_CALL(runner, getOperator(TestRun::OPERATOR_FULLREAD))
+        .Times(1)
+        .WillRepeatedly(Return(&mockOperator));
+
+    EXPECT_CALL(mockOperator, run(_, _))
+        .Times(1);
+
+    EXPECT_EQ(true, runner.RunCommand());
 }
 
 TEST(mainfunction, help)
@@ -84,6 +123,43 @@ TEST(mainfunction, write)
     EXPECT_EQ(true, runner.RunCommand());
 }
 
+TEST(mainfunction, fullwrite)
+{
+    MockTestRun runner;
+    MockOperator mockOperator;
+    EXPECT_CALL(runner, getInput())
+        .Times(3)
+        .WillOnce(Return("fullwrite"))
+        .WillOnce(Return("0xa"))
+        .WillOnce(Return("0xa"));
+
+    EXPECT_CALL(runner, getOperator(TestRun::OPERATOR_FULLWRITE))
+        .Times(1)
+        .WillRepeatedly(Return(&mockOperator));
+
+    EXPECT_CALL(mockOperator, run(_, _))
+        .Times(1);
+
+    EXPECT_EQ(true, runner.RunCommand());
+}
+
+TEST(mainfunction, senariocommand1)
+{
+    MockTestRun runner;
+    MockOperator mockOperator;
+    EXPECT_CALL(runner, getInput())
+        .Times(1)
+        .WillOnce(Return("1_"));
+    
+    EXPECT_CALL(runner, getOperator(TestRun::SCENARIO_1))
+        .Times(1)
+        .WillRepeatedly(Return(&mockOperator));
+
+    EXPECT_CALL(mockOperator, run(_, _))
+        .Times(1);
+
+    EXPECT_EQ(true, runner.RunCommand());
+}
 
 
 TEST(Help, operationtest)
