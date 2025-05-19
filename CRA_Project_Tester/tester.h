@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <iostream>
+#include <string>
 using namespace std;
 class ITestOperation
 {
@@ -128,7 +129,30 @@ private:
 
 };
 
-
+class FullWrite : public Write
+{
+public:
+	void run(string command1 = "", string command2 = "") override
+	{
+		fullWrite(command1);
+	}
+	void fullWrite(string data)
+	{
+		try
+		{
+			checkData(data);
+			for (int i = 0; i < 100; i++)
+			{
+				callSSD(to_string(i), data);
+			}
+		}
+		catch (invalid_argument& e)
+		{
+			cout << "error message : " << e.what() << endl;
+		}
+		return;
+	}
+};
 
 class SSDTest_FullWriteAndReadCompare :public ITestOperation
 {
@@ -170,6 +194,7 @@ public:
 		operators[OPERATOR_READ] = new Read;
 		operators[OPERATOR_HELP] = new Help;
 		operators[OPERATOR_WRITE] = new Write;
+		operators[OPERATOR_FULLWRITE] = new Write;
 	}
 	bool RunCommand()
 	{
