@@ -139,6 +139,9 @@ private:
 		else if (command == "exit") return OPERATOR_EXIT;
 		else if (command == "fullwrite") return OPERATOR_FULLWRITE;
 		else if (command == "fullread") return OPERATOR_FULLREAD;
+		else if (command == "1_" || command == "1_FullWriteAndReadCompare") return SCENARIO_1;
+		else if (command == "2_" || command == "2_PartialLBAWrite") return SCENARIO_2;
+		else if (command == "3_" || command == "3_WriteReadAging") return SCENARIO_3;
 		else return -1;
 	}
 
