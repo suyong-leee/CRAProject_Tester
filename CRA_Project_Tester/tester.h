@@ -91,6 +91,109 @@ private:
 	Read* read;
 };
 
+class TestRun
+{
+public:
+	enum operatorOrder
+	{
+		
+		OPERATOR_WRITE = 0,
+		OPERATOR_FULLWRITE,
+		PARAM_TWO = OPERATOR_FULLWRITE,
+
+		OPERATOR_READ,
+		OPERATOR_FULLREAD,
+		PARAM_ONE = OPERATOR_FULLREAD,
+
+		OPERATOR_EXIT,
+		OPERATOR_HELP,
+
+		SCENARIO_1,
+		SCENARIO_2,
+		SCENARIO_3,
+		NUM_OF_OPERATOR,
+		PARAM_ZERO = NUM_OF_OPERATOR,
+	};
+	TestRun()
+	{
+		operators[OPERATOR_READ] = new Read;
+		operators[OPERATOR_HELP] = new Help;
+	}
+	bool RunCommand()
+	{
+
+		int operationOrder = getOperationNumber(getInput());
+
+		if (operationOrder == -1)
+		{
+			cout << "INVALID COMMAND" << endl;
+			return true;
+		}
+		
+		if (operationOrder == OPERATOR_EXIT)
+		{
+			return false;
+		}
+
+		getParameters(operationOrder);
+
+		currentOperation = getOperator(operationOrder);
+
+		currentOperation->run(parameter[0], parameter[1]);
+		
+		return true;
+	}
+
+	virtual string getInput() {
+		string value;
+		cin >> value;
+		return value;
+	}
+	
+	virtual ITestOperation* getOperator(int operation)
+	{
+		return operators[operation];
+	}
+private:
+	ITestOperation* currentOperation = nullptr;
+	ITestOperation* operators[NUM_OF_OPERATOR] = {nullptr,};
+	string parameter[2] = {"",};
+
+	int getOperationNumber(const string& command)
+	{
+		if (command == "read") return OPERATOR_READ;
+		else if (command == "write") return OPERATOR_WRITE;
+		else if (command == "help") return OPERATOR_HELP;
+		else if (command == "exit") return OPERATOR_EXIT;
+		else if (command == "fullwrite") return OPERATOR_FULLWRITE;
+		else if (command == "fullread") return OPERATOR_FULLREAD;
+		else if (command == "1_" || command == "1_FullWriteAndReadCompare") return SCENARIO_1;
+		else if (command == "2_" || command == "2_PartialLBAWrite") return SCENARIO_2;
+		else if (command == "3_" || command == "3_WriteReadAging") return SCENARIO_3;
+		else return -1;
+	}
+
+	void getParameters(int operationOrder)
+	{
+		if (operationOrder <= PARAM_TWO)
+		{
+			parameter[0] = getInput();
+			parameter[1] = getInput();
+		}
+		else if (operationOrder <= PARAM_ONE)
+		{
+			parameter[0] = getInput();
+			parameter[1] = "";
+		}
+		else
+		{
+			parameter[0] = "";
+			parameter[1] = "";
+		}
+		return;
+	}
+};
+
 class SSDTest_PartialLBAWrite :public ITestOperation, public exception
 {
 public:
@@ -102,3 +205,4 @@ private:
 	Write* mWrite;
 	Read* mRead;
 };
+
