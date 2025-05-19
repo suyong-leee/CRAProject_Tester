@@ -17,20 +17,30 @@ void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 	for (int i = 0; i < 100; i += 5)
 	{
 		for (int j = i; j < i + 5; j++) {
-			write->run(to_string(j),buffer);
-			writeBuffer[j] = buffer;
+			saveBuffer(j, buffer, writeBuffer[j]);
 		}
 		for (int j = i; j < i + 5; j++) {
 			readBuffer = read->read(to_string(j));
-			if (writeBuffer[j] == readBuffer) {
-				continue;
-			}
-			else {
-				throw exception("Compare Failed\n");
-			}
+			if (CompareBuffer(writeBuffer[j], readBuffer)) continue;
 		}
 	}
 
+}
+
+void SSDTest_FullWriteAndReadCompare::saveBuffer(int j, std::string buffer, std::string&  writeBuffer)
+{
+	write->run(to_string(j), buffer);
+	writeBuffer = buffer;
+}
+
+bool SSDTest_FullWriteAndReadCompare::CompareBuffer(std::string  writeBuffer,  std::string readBuffer)
+{
+	if (writeBuffer == readBuffer) {
+		return true;
+	}
+	else {
+		throw exception("Compare Failed\n");
+	}
 }
 
 void SSDTest_PartialLBAWrite::run(string param1, string param2)
