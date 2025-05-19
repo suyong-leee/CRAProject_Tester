@@ -16,7 +16,7 @@ public:
 	{
 		cout << "read" << command1 <<endl;
 	}
-	string read(string address)
+	virtual string read(string address)
 	{
 		return "error";
 	}
