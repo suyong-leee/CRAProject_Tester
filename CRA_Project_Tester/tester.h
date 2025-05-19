@@ -194,7 +194,7 @@ public:
 		operators[OPERATOR_READ] = new Read;
 		operators[OPERATOR_HELP] = new Help;
 		operators[OPERATOR_WRITE] = new Write;
-		operators[OPERATOR_FULLWRITE] = new Write;
+		operators[OPERATOR_FULLWRITE] = new FullWrite;
 	}
 	bool RunCommand()
 	{
