@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <iostream>
+#include <string>
 using namespace std;
 class ITestOperation
 {
@@ -51,7 +52,21 @@ public:
 	}
 };
 
+class FullRead : public Read {
 
+public:
+	virtual void run(string command1 = "", string command2 = "") override
+	{
+		for (int i = 0; i < 100; i++)
+		{
+			string lba = to_string(i);
+			string result = read(lba);
+			if (lba.size() == 1) lba = "0" + lba;
+			cout << "[Read] LBA " << lba << " : " << result << endl;
+		}
+	}
+
+};
 class Help : public ITestOperation
 {
 public:
@@ -103,8 +118,8 @@ public:
 		PARAM_TWO = OPERATOR_FULLWRITE,
 
 		OPERATOR_READ,
+		PARAM_ONE = OPERATOR_READ,
 		OPERATOR_FULLREAD,
-		PARAM_ONE = OPERATOR_FULLREAD,
 
 		OPERATOR_EXIT,
 		OPERATOR_HELP,
@@ -118,6 +133,7 @@ public:
 	TestRun()
 	{
 		operators[OPERATOR_READ] = new Read;
+		operators[OPERATOR_FULLREAD] = new FullRead;
 		operators[OPERATOR_HELP] = new Help;
 	}
 	bool RunCommand()
