@@ -30,3 +30,15 @@ TEST(SDDTEST, Test3)
 
 	ssdtest3.run("","");
 }
+
+TEST(SDDTEST, WriteReadAging)
+{
+	MockWrite mkwr;
+	MockRead mkrd;
+	SSDTest_WriteReadAging test(&mkwr, &mkrd);
+
+	EXPECT_CALL(mkwr, run("0", "0x12345678")).Times(200);
+	EXPECT_CALL(mkwr, run("99", "0x12345678")).Times(200);
+
+	test.run("", "");
+}
