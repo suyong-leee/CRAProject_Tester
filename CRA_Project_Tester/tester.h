@@ -31,15 +31,17 @@ public:
 	{
 		try
 		{
-			checkCMD(command1);
+			if (checkCMD(command1))
+			{
+				read(command1);
+				cout << "read" << command1 << endl;
+			}
 		}
 		catch (invalid_argument& e)
 		{
 			cout << "error message : " << e.what() << endl;
 		}
 
-		read(command1);
-		cout << "read" << command1 << endl;
 		return;
 	}
 	string read(string address)
