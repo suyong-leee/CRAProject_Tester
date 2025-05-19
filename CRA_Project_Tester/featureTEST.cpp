@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include "tester.h"
-#include "test_run.cpp"
+
 using namespace testing;
 using namespace std;
 
