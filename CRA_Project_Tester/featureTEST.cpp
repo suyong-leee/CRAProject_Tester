@@ -19,8 +19,8 @@ TEST(SSDTEST, ReadNone) {
 
     MockReadDriver mockDriver;
     EXPECT_CALL(mockDriver, Read("3")).WillRepeatedly(Return("helloWorld"));
-    //cout << mockDriver.Read("3") << endl;
-    EXPECT_EQ(mockDriver.Read("3"), "helloWorld");
+	//cout << mockDriver.Read("3") << endl;
+	EXPECT_EQ(mockDriver.Read("3"), "helloWorld");
 }
 
 TEST(SSDTEST, LBAinvalid) {
@@ -39,7 +39,7 @@ TEST(SSDTEST, LBAinvalid2) {
 }
 
 TEST(SSDTEST, LBAinvalid3) {
-
     MockReadDriver mockDriver;
     EXPECT_THROW(mockDriver.checkCMD("1A"), std::invalid_argument);
 }
+
