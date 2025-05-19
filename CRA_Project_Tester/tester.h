@@ -26,7 +26,7 @@ public:
     return true;
 }
 
-	void run(string command1 = "", string command2 = "") override
+  virtual void run(string command1 = "",string command2 = "") override
 	{
         try
         {
@@ -43,6 +43,7 @@ public:
 
         return;
 	}
+  
 	string read(string address)
 	{
 		return "error";
@@ -68,7 +69,7 @@ public:
 class Write : public ITestOperation
 {
 public:
-	void run(string command1 = "", string command2 = "") override
+	virtual void run(string command1 = "", string command2 = "") override
 	{
 		cout << "write" << command1 << endl;
 	}
@@ -78,15 +79,26 @@ public:
 	}
 };
 
-class SSDTest :public ITestOperation
+
+
+class SSDTest_FullWriteAndReadCompare :public ITestOperation
 {
 public:
-
-	// ITestOperation을(를) 통해 상속됨
+	SSDTest_FullWriteAndReadCompare(Write* w, Read* r) : write(w), read(r) {};
 	void run(string command1 = "", string command2 = "") override;
 private:
-	void FullWriteAndReadCompare();
-	void PartialLBAWrite();
-	void WriteReadAging();
+	Write* write;
+	Read* read;
 };
 
+class SSDTest_PartialLBAWrite :public ITestOperation, public exception
+{
+public:
+	SSDTest_PartialLBAWrite(Write* w, Read* r) : mWrite(w), mRead(r) {};
+	SSDTest_PartialLBAWrite() : mWrite(nullptr), mRead(nullptr) {};
+	void run(string param1, string param2) override;
+
+private:
+	Write* mWrite;
+	Read* mRead;
+};
