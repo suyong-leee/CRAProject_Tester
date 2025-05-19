@@ -30,6 +30,9 @@ int main()
 		}
 		else if (command == "help")
 			operation = new Help;
+		
+		else if (command == "exit")
+			break;
 		else
 			continue;
 		operation->run(param1, param2);
