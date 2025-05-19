@@ -15,20 +15,20 @@ class Read : public ITestOperation
 public:
     bool checkCMD(string command)
     {
-    if (command.size() > 2)
-    {
-        throw invalid_argument("3자리 이상 불가.");
+        if (command.size() > 2)
+        {
+            throw invalid_argument("3자리 이상 불가.");
+        }
+        for (int i = 0; i < command.size(); i++)
+        {
+            if (command[i] >= '0' && command[i] <= '9') continue;
+            else throw invalid_argument("0 ~ 9사이 수만 가능");
+        }
+        return true;
     }
-    for (int i = 0; i < command.size(); i++)
-    {
-        if (command[i] >= '0' && command[i] <= '9') continue;
-        else throw invalid_argument("0 ~ 9사이 수만 가능");
-    }
-    return true;
-}
 
-	void run(string command1 = "",string command2 = "") override
-	{
+    void run(string command1 = "",string command2 = "") override
+    {
         try
         {
             if (checkCMD(command1))
@@ -44,12 +44,12 @@ public:
         }
 
         return;
-	}
+    }
 
-	virtual string read(string address)
-	{
-		return "error";
-	}
+    virtual string read(string address)
+    {
+	return "error";
+    }
 };
 
 class FullRead : public Read {
