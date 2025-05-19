@@ -12,37 +12,36 @@ public:
 class Read : public ITestOperation
 {
 public:
-	bool checkCMD(string command)
-	{
-		if (command.size() > 2)
-		{
-			throw invalid_argument("3자리 이상 불가.");
-		}
-		for (int i = 0; i < command.size(); i++)
-		{
-			if (command[i] >= '0' && command[i] <= '9') continue;
-			else
-				throw invalid_argument("0 ~ 9사이 수만 가능");
-		}
-		return true;
-	}
+    bool checkCMD(string command)
+    {
+    if (command.size() > 2)
+    {
+        throw invalid_argument("3자리 이상 불가.");
+    }
+    for (int i = 0; i < command.size(); i++)
+    {
+        if (command[i] >= '0' && command[i] <= '9') continue;
+        else throw invalid_argument("0 ~ 9사이 수만 가능");
+    }
+    return true;
+}
 
 	void run(string command1 = "", string command2 = "") override
 	{
-		try
-		{
-			if (checkCMD(command1))
-			{
-				read(command1);
-				cout << "read" << command1 << endl;
-			}
-		}
-		catch (invalid_argument& e)
-		{
-			cout << "error message : " << e.what() << endl;
-		}
+        try
+        {
+            if (checkCMD(command1))
+            {
+                read(command1);
+                cout << "read" << command1 << endl;
+            }
+        }
+        catch (invalid_argument& e)
+        {
+            cout << "error message : " << e.what() << endl;
+        }
 
-		return;
+        return;
 	}
 	string read(string address)
 	{
