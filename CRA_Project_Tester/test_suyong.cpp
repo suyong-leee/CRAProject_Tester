@@ -71,9 +71,8 @@ TEST(mainfunction, fullread)
     MockTestRun runner;
     MockOperator mockOperator;
     EXPECT_CALL(runner, getInput())
-        .Times(2)
-        .WillOnce(Return("fullread"))
-        .WillOnce(Return("0xa"));
+        .Times(1)
+        .WillOnce(Return("fullread"));
 
     EXPECT_CALL(runner, getOperator(TestRun::OPERATOR_FULLREAD))
         .Times(1)
@@ -128,10 +127,9 @@ TEST(mainfunction, fullwrite)
     MockTestRun runner;
     MockOperator mockOperator;
     EXPECT_CALL(runner, getInput())
-        .Times(3)
+        .Times(2)
         .WillOnce(Return("fullwrite"))
-        .WillOnce(Return("0xa"))
-        .WillOnce(Return("0xa"));
+        .WillOnce(Return("0xaaaaaaaa"));
 
     EXPECT_CALL(runner, getOperator(TestRun::OPERATOR_FULLWRITE))
         .Times(1)
@@ -201,4 +199,61 @@ TEST(Help, operationtest)
     std::cout.rdbuf(old);
     std::string output = buffer.str();
     EXPECT_EQ(expectResult, output);
+}
+
+TEST(Testwrite, InvalidWriteAddress)
+{
+    Write writer;
+    EXPECT_THROW(writer.checkAddress("101"), std::invalid_argument);
+}
+
+TEST(Testwrite, InvalidWriteData1)
+{
+    Write writer;
+    EXPECT_THROW(writer.checkData("0x000G000a"), std::invalid_argument);
+}
+
+TEST(Testwrite, InvalidWriteData2)
+{
+    Write writer;
+    EXPECT_THROW(writer.checkData("0x111111111"), std::invalid_argument);
+}
+
+class MockWriter : public Write
+{
+public:
+    MOCK_METHOD(void, callSSD, (string, string), (override));
+};
+
+TEST(Testwrite, normalWrite)
+{
+    MockWriter writer;
+    string address = "30";
+    string data = "0xAAAAAAAA";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(1);
+
+    writer.run(address, data);
+}
+
+TEST(Testwrite, InvalidWrite)
+{
+    MockWriter writer;
+    string address = "30";
+    string data = "0xAAAAAG";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(0);
+
+    writer.run(address, data);
+}
+
+TEST(Testwrite, InvalidWrite2)
+{
+    MockWriter writer;
+    string address = "";
+    string data = "0xAAAAAG";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(0);
+
+    writer.run(address, data);
 }
