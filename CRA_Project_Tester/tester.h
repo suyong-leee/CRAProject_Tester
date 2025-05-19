@@ -55,16 +55,16 @@ public:
 class FullRead : public Read {
 
 public:
-	virtual void run(string command1 = "", string command2 = "") override
-	{
-		for (int i = 0; i < 100; i++)
-		{
-		    string lba = to_string(i);
-		    string result = read(lba);
-	            if (lba.size() == 1) lba = "0" + lba;
-		    cout << "[Read] LBA " << lba << " : " << result << endl;
-		}
+    virtual void run(string command1 = "", string command2 = "") override
+    {
+        for (int i = 0; i < 100; i++)
+        {
+	    string lba = to_string(i);
+	    string result = read(lba);
+            if (lba.size() == 1) lba = "0" + lba;	
+		cout << "[Read] LBA " << lba << " : " << result << endl;
 	}
+    }
 
 };
 class Help : public ITestOperation
