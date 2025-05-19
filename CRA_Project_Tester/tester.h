@@ -101,6 +101,12 @@ public:
 		{
 			currentOperation = getOperator(OPERATOR_HELP);
 		}
+		else if (command == "write")
+		{
+			param1 = getInput();
+			param2 = getInput();
+			currentOperation = getOperator(OPERATOR_WRITE);
+		}
 		else if (command == "exit")
 		{
 			return false;
