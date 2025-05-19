@@ -55,3 +55,20 @@ TEST(SDDTEST, WriteReadAging)
 
 	test.run("", "");
 }
+
+TEST(SDDTEST, WriteReadAging_exception)
+{
+	MockWrite mkwr;
+	MockRead mkrd;
+	SSDTest_WriteReadAging test(&mkwr, &mkrd);
+
+	EXPECT_CALL(mkwr, run("0", _));
+	EXPECT_CALL(mkwr, run("99", _));
+
+	EXPECT_CALL(mkrd, read("0"))
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("99"))
+		.WillRepeatedly(Return(string("0x11111111")));
+
+	EXPECT_THROW(test.run("", ""), exception);
+}
