@@ -2,6 +2,13 @@
 #include <string>
 #include "tester.h"
 using namespace std;
+
+class MockWrite : public Write
+{	
+public:
+	MOCK_METHOD(void, write, (string,string), (override));
+};
+
 TEST(Help, operationtest)
 {
 	std::stringstream buffer;
@@ -23,4 +30,14 @@ TEST(Help, operationtest)
 	std::cout.rdbuf(old);
 	std::string output = buffer.str();
 	EXPECT_EQ(expectResult, output);
+}
+
+TEST(Write, executeNormalWrite)
+{
+	MockWrite mockWriter;
+
+	EXPECT_CALL(mockWriter, write("0x12", "0x33"))
+		.Times(1);
+
+	mockWriter.run("0x12","0x33");
 }

@@ -43,9 +43,9 @@ class Write : public ITestOperation
 public:
 	void run(string command1 = "", string command2 = "") override
 	{
-		cout << "write" << command1 << endl;
+		write(command1, command2);
 	}
-	void write(string address, string data)
+	virtual void write(string address, string data)
 	{
 		return;
 	}
