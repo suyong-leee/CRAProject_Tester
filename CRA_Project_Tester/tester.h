@@ -12,11 +12,11 @@ class Read : public ITestOperation
 {
 public:
 
-	virtual void run(string command1 = "",string command2 = "") override
+	void run(string command1 = "",string command2 = "") override
 	{
 		cout << "read" << command1 <<endl;
 	}
-	string read(string address)
+	virtual string read(string address)
 	{
 		return "error";
 	}
