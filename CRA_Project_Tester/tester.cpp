@@ -1,7 +1,10 @@
 ﻿#include "tester.h"
-#include<string>
-#include<stdexcept>
+#include <string>
+#include <stdexcept>
+#include <sstream>
+
 using namespace std;
+
 void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 {
 	//• 0 ~4번 LBA까지 Write 명령어를 수행한다.
@@ -92,5 +95,10 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 }
 
 string SSDTest_WriteReadAging::createRadomString(void) {
-	return "0x12345678";
+	stringstream ss;
+	unsigned int randomNum = rand();
+
+	randomNum = randomNum << 16 | rand();
+	ss << hex << randomNum;
+	return "0x" + ss.str();
 }
