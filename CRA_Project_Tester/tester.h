@@ -4,7 +4,7 @@ using namespace std;
 class ITestOperation
 {
 public:
-	virtual string run(string command = "",string command2 = "") = 0;
+	virtual void run(string command = "",string command2 = "") = 0;
 };
 
 //example
@@ -12,10 +12,10 @@ class Read : public ITestOperation
 {
 public:
 
-	string run(string command1 = "",string command2 = "") override
+	void run(string command1 = "",string command2 = "") override
 	{
 		cout << "read" << command1 <<endl;
-		return "hello read";
+		return;
 	}
 	string read(string address)
 	{
@@ -26,7 +26,7 @@ public:
 class Help : public ITestOperation
 {
 public:
-	void run(string command1 = "", string command2 = "")
+	void run(string command1 = "", string command2 = "") override
 	{
 		cout << "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민" << endl;
 		cout << "How to use CMD" << endl;
