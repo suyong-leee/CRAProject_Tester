@@ -77,11 +77,13 @@ private:
 class SSDTest_WriteReadAging :public ITestOperation, public exception
 {
 public:
-	SSDTest_WriteReadAging(Write* w, Read* r) : write(w), read(r) {};
-	SSDTest_WriteReadAging() : write(nullptr), read(nullptr) {};
+	SSDTest_WriteReadAging(Write* w, Read* r) : mWrite(w), mRead(r) {};
+	SSDTest_WriteReadAging() : mWrite(nullptr), mRead(nullptr) {};
 	void run(string param1, string param2) override;
 
 private:
-	Write* write;
-	Read* read;
+	Write* mWrite;
+	Read* mRead;
+
+	string createRadomString(void);
 };
