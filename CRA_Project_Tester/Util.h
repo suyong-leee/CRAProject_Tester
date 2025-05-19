@@ -5,5 +5,5 @@
 #include <sstream>
 using namespace std;
 string createRadomString(void);
-bool CompareBuffer(string  writeBuffer, string readBuffer);
+bool CompareData(string  writeBuffer, string readBuffer);
 #endif

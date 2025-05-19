@@ -24,7 +24,7 @@ void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 		}
 		for (int j = i; j < i + 5; j++) {
 			readBuffer = read->read(to_string(j));
-			if (CompareBuffer(writeBuffer[j], readBuffer)) continue;
+			if (CompareData(writeBuffer[j], readBuffer)) continue;
 		}
 	}
 
