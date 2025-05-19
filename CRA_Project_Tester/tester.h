@@ -47,10 +47,9 @@ public:
 		{
 			if (checkCMD(address))
 			{
-				string command = "CRAProject_SSD.exe R " + address;
+				string command = "ssd.exe R " + address;
 				string result;
 
-				// _popen으로 ssd.exe 실행
 				FILE* pipe = _popen(command.c_str(), "r");
 				if (!pipe) {
 					return "error: cannot open pipe";
