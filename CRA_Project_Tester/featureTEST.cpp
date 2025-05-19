@@ -11,7 +11,9 @@ using namespace std;
 class MockReadDriver : public Read {
 public:
     MOCK_METHOD(string, read, (string cmd1), (override));
+
     MOCK_METHOD(void, run, (string, string), (override));
+
 };
 class MockFullRead : public FullRead {
 public:
@@ -22,7 +24,7 @@ TEST(SSDTEST, ReadNone) {
 
     MockReadDriver mockDriver;
     EXPECT_CALL(mockDriver, read("3")).WillRepeatedly(Return("helloWorld"));
-    //cout << mockDriver.Read("3") << endl;
+
     EXPECT_EQ(mockDriver.read("3"), "helloWorld");
 }
 

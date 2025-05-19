@@ -15,30 +15,31 @@ class Read : public ITestOperation
 public:
     bool checkCMD(string command)
     {
-    if (command.size() > 2)
-    {
-        throw invalid_argument("세 자리 이상 불가.");
-    }
-	if (command.size() == 0)
-	{
-		throw invalid_argument("한 자리 이상 입력 필수");
-	}
-    for (int i = 0; i < command.size(); i++)
-    {
-        if (command[i] >= '0' && command[i] <= '9') continue;
-        else throw invalid_argument("0 ~ 9 사이 수만 가능");
-    }
-    return true;
-}
 
-  virtual void run(string command1 = "",string command2 = "") override
-	{
+	    if (command.size() > 2)
+	    {
+		    throw invalid_argument("세 자리 이상 불가.");
+	    }
+	    if (command.size() == 0)
+	    {
+		    throw invalid_argument("한 자리 이상 입력 필수");
+	    }
+	    for (int i = 0; i < command.size(); i++)
+	    {
+		    if (command[i] >= '0' && command[i] <= '9') continue;
+		    else throw invalid_argument("0 ~ 9 사이 수만 가능");
+	    }
+	    return true;
+    }
+
+    void run(string command1 = "",string command2 = "") override
+    {
         try
         {
             if (checkCMD(command1))
             {
-				string result = read(command1);
-				if (command1.size() == 1) command1 = "0" + command1;
+		string result = read(command1);
+		if (command1.size() == 1) command1 = "0" + command1;
                 cout << "[Read] LBA " << command1 << " : " << result << endl;
             }
         }
@@ -48,27 +49,29 @@ public:
         }
 
         return;
-	}
-  
-  virtual string read(string address)
-	{
-		return "error";
-	}
+
+    }
+
+    virtual string read(string address)
+    {
+	return "error";
+    }
+
 };
 
 class FullRead : public Read {
 
 public:
-	virtual void run(string command1 = "", string command2 = "") override
-	{
-		for (int i = 0; i < 100; i++)
-		{
-			string lba = to_string(i);
-			string result = read(lba);
-			if (lba.size() == 1) lba = "0" + lba;
-			cout << "[Read] LBA " << lba << " : " << result << endl;
-		}
+    virtual void run(string command1 = "", string command2 = "") override
+    {
+        for (int i = 0; i < 100; i++)
+        {
+	    string lba = to_string(i);
+	    string result = read(lba);
+            if (lba.size() == 1) lba = "0" + lba;	
+		cout << "[Read] LBA " << lba << " : " << result << endl;
 	}
+    }
 
 };
 class Help : public ITestOperation
@@ -91,12 +94,62 @@ class Write : public ITestOperation
 public:
 	virtual void run(string command1 = "", string command2 = "") override
 	{
-		cout << "write" << command1 << endl;
+		write(command1, command2);
 	}
 	void write(string address, string data)
 	{
+		try
+		{
+			checkAddress(address);
+			checkData(data);
+			callSSD(address, data);
+		}
+		catch (invalid_argument& e)
+		{
+			cout << "error message : " << e.what() << endl;
+		}
 		return;
 	}
+
+	bool checkAddress(string address)
+	{
+		if (address.size() > 2 || address.size() == 0)
+		{
+			throw invalid_argument("0~99 사이만 가능.");
+		}
+		for (int i = 0; i < address.size(); i++)
+		{
+			if (address[i] >= '0' && address[i] <= '9') continue;
+			else throw invalid_argument("0 ~ 9사이 수만 가능");
+		}
+		return true;
+	}
+
+	bool checkData(string data)
+	{
+		if (data.size() == 11)
+		{
+			throw invalid_argument("16진수 8자리만 입력가능");
+		}
+		for (int i = 2; i < data.size(); i++)
+		{
+			if ((data[i] >= '0' && data[i] <= '9') || (data[i] >= 'A' && data[i] <= 'F')) continue;
+			else throw invalid_argument("0 ~ 9사이 A~F만 가능");
+		}
+		return true;
+	}
+
+	virtual void callSSD(string address, string data)
+	{
+		const char* exePath = "SSD.exe";
+		const char* writeCmd = "W";
+
+		std::string command = std::string("\"") + exePath + " " + writeCmd + " " + address + " " + data;
+		int result = std::system(command.c_str());
+		return;
+	}
+private:
+
 };
 
 
@@ -106,6 +159,8 @@ class SSDTest_FullWriteAndReadCompare :public ITestOperation
 public:
 	SSDTest_FullWriteAndReadCompare(Write* w, Read* r) : write(w), read(r) {};
 	void run(string command1 = "", string command2 = "") override;
+	void saveBuffer(int j, std::string buffer, std::string&  writeBuffer);
+	bool CompareBuffer(std::string  writeBuffer, std::string readBuffer);
 private:
 	Write* write;
 	Read* read;
@@ -118,13 +173,13 @@ public:
 	{
 		
 		OPERATOR_WRITE = 0,
-		OPERATOR_FULLWRITE,
-		PARAM_TWO = OPERATOR_FULLWRITE,
+		PARAM_TWO = OPERATOR_WRITE,
 
+		OPERATOR_FULLWRITE,
 		OPERATOR_READ,
 		PARAM_ONE = OPERATOR_READ,
 		OPERATOR_FULLREAD,
-
+    
 		OPERATOR_EXIT,
 		OPERATOR_HELP,
 
@@ -139,6 +194,7 @@ public:
 		operators[OPERATOR_READ] = new Read;
 		operators[OPERATOR_FULLREAD] = new FullRead;
 		operators[OPERATOR_HELP] = new Help;
+		operators[OPERATOR_WRITE] = new Write;
 	}
 	bool RunCommand()
 	{
@@ -227,3 +283,16 @@ private:
 	Read* mRead;
 };
 
+class SSDTest_WriteReadAging :public ITestOperation, public exception
+{
+public:
+	SSDTest_WriteReadAging(Write* w, Read* r) : mWrite(w), mRead(r) {};
+	SSDTest_WriteReadAging() : mWrite(nullptr), mRead(nullptr) {};
+	void run(string param1, string param2) override;
+
+private:
+	Write* mWrite;
+	Read* mRead;
+
+	string createRadomString(void);
+};
