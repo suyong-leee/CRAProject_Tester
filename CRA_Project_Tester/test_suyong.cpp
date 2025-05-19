@@ -71,9 +71,8 @@ TEST(mainfunction, fullread)
     MockTestRun runner;
     MockOperator mockOperator;
     EXPECT_CALL(runner, getInput())
-        .Times(2)
-        .WillOnce(Return("fullread"))
-        .WillOnce(Return("0xa"));
+        .Times(1)
+        .WillOnce(Return("fullread"));
 
     EXPECT_CALL(runner, getOperator(TestRun::OPERATOR_FULLREAD))
         .Times(1)
@@ -128,10 +127,9 @@ TEST(mainfunction, fullwrite)
     MockTestRun runner;
     MockOperator mockOperator;
     EXPECT_CALL(runner, getInput())
-        .Times(3)
+        .Times(2)
         .WillOnce(Return("fullwrite"))
-        .WillOnce(Return("0xa"))
-        .WillOnce(Return("0xa"));
+        .WillOnce(Return("0xaaaaaaaa"));
 
     EXPECT_CALL(runner, getOperator(TestRun::OPERATOR_FULLWRITE))
         .Times(1)
