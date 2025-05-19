@@ -143,7 +143,7 @@ TEST(mainfunction, fullwrite)
     EXPECT_EQ(true, runner.RunCommand());
 }
 
-TEST(mainfunction, senariocommand1)
+TEST(mainfunction, scenariocommand1)
 {
     MockTestRun runner;
     MockOperator mockOperator;
@@ -161,7 +161,7 @@ TEST(mainfunction, senariocommand1)
     EXPECT_EQ(true, runner.RunCommand());
 }
 
-TEST(mainfunction, senariocommand2)
+TEST(mainfunction, scenariocommand2)
 {
     MockTestRun runner;
     MockOperator mockOperator;
