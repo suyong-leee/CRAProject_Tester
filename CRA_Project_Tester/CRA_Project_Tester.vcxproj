@@ -137,13 +137,15 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="test_suyong.cpp" />
-    <ClCompile Include="tester.cpp">
+    <ClCompile Include="testScript.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/TP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="tester.h" />
+    <ClInclude Include="testRunner.h" />
+    <ClInclude Include="testShell.h" />
+    <ClInclude Include="testScript.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
