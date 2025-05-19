@@ -143,7 +143,7 @@ public:
 
 	bool checkData(string data)
 	{
-		if (data.size() == 11)
+		if (data.size() != 10)
 		{
 			throw invalid_argument("16진수 8자리만 입력가능");
 		}
