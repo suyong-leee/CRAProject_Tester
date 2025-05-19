@@ -34,11 +34,8 @@ public:
 
     void run(string command1 = "",string command2 = "") override
     {
-       
-		 read(command1);
-
+	    read(command1);
         return;
-
     }
 
     virtual string read(string address)
@@ -50,7 +47,7 @@ public:
 		{
 			if (checkCMD(address))
 			{
-				string command = "ssd.exe R " + address;
+				string command = "CRAProject_SSD.exe R " + address;
 				string result;
 
 				// _popen으로 ssd.exe 실행
