@@ -203,16 +203,22 @@ TEST(Help, operationtest)
     EXPECT_EQ(expectResult, output);
 }
 
-TEST(Testwrite, InvalidWriteAddress1)
+TEST(Testwrite, InvalidWriteAddress)
 {
     Write writer;
-    EXPECT_THROW(writer.run("101", "0x0000000a"), std::invalid_argument);
+    EXPECT_THROW(writer.checkAddress("101"), std::invalid_argument);
 }
 
-TEST(Testwrite, InvalidWriteAddress2)
+TEST(Testwrite, InvalidWriteData1)
 {
     Write writer;
-    EXPECT_THROW(writer.run("10", "0x000G000a"), std::invalid_argument);
+    EXPECT_THROW(writer.checkData("0x000G000a"), std::invalid_argument);
+}
+
+TEST(Testwrite, InvalidWriteData2)
+{
+    Write writer;
+    EXPECT_THROW(writer.checkData("0x111111111"), std::invalid_argument);
 }
 
 TEST(Testwrite, normalWrite)

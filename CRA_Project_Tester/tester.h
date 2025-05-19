@@ -71,12 +71,51 @@ class Write : public ITestOperation
 public:
 	virtual void run(string command1 = "", string command2 = "") override
 	{
-		cout << "write" << command1 << endl;
+		write(command1, command2);
 	}
 	void write(string address, string data)
 	{
+		try
+		{
+			checkAddress(address);
+			checkData(data);
+
+			cout << "sucess" << endl;
+		}
+		catch (invalid_argument& e)
+		{
+			cout << "error message : " << e.what() << endl;
+		}
 		return;
 	}
+	bool checkAddress(string address)
+	{
+		if (address.size() > 2)
+		{
+			throw invalid_argument("3자리 이상 불가.");
+		}
+		for (int i = 0; i < address.size(); i++)
+		{
+			if (address[i] >= '0' && address[i] <= '9') continue;
+			else throw invalid_argument("0 ~ 9사이 수만 가능");
+		}
+		return true;
+	}
+	bool checkData(string data)
+	{
+		if (data.size() == 11)
+		{
+			throw invalid_argument("16진수 8자리만 입력가능");
+		}
+		for (int i = 2; i < data.size(); i++)
+		{
+			if ((data[i] >= '0' && data[i] <= '9') || (data[i] >= 'A' && data[i] <= 'F')) continue;
+			else throw invalid_argument("0 ~ 9사이 A~F만 가능");
+		}
+		return true;
+	}
+private:
+
 };
 
 
@@ -118,6 +157,7 @@ public:
 	{
 		operators[OPERATOR_READ] = new Read;
 		operators[OPERATOR_HELP] = new Help;
+		operators[OPERATOR_WRITE] = new Write;
 	}
 	bool RunCommand()
 	{
