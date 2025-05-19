@@ -63,3 +63,54 @@ private:
 	void WriteReadAging();
 };
 
+class TestRun
+{
+public:
+	TestRun()
+	{
+		operators[0] = new Read;
+		operators[1] = new Help;
+	}
+	bool RunCommand()
+	{
+		string command, param1, param2;
+
+		command = getInput();
+		param1 = "";
+		param2 = "";
+		cout << command << endl;
+		if (command == "read") 
+		{
+			param1 = getInput();
+			currentOperation = getOperator(0);
+		}
+		else if (command == "help")
+		{
+			currentOperation = getOperator(1);
+		}
+		else if (command == "exit")
+		{
+			return false;
+		}
+		else
+		{
+			cout << "INVALID COMMAND" << endl;
+		}
+		currentOperation->run(param1, param2);
+		return true;
+	}
+
+	virtual string getInput() {
+		string value;
+		cin >> value;
+		return value;
+	}
+	
+	virtual ITestOperation* getOperator(int operation)
+	{
+		return operators[operation];
+	}
+private:
+	ITestOperation* currentOperation = nullptr;
+	ITestOperation* operators[10] = {nullptr,};
+};

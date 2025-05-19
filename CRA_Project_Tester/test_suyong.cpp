@@ -2,6 +2,68 @@
 #include <string>
 #include "tester.h"
 using namespace std;
+using namespace testing;
+
+class MockOperator : public ITestOperation
+{
+public:
+	MOCK_METHOD(void, run, (string,string), (override));
+};
+
+class MockTestRun : public TestRun
+{
+public:
+	MOCK_METHOD(string, getInput, (), (override));
+	MOCK_METHOD(ITestOperation*, getOperator, (int), (override));
+};
+
+TEST(mainfunction,exit)
+{
+	MockTestRun runner;
+	EXPECT_CALL(runner, getInput())
+		.Times(1)
+		.WillRepeatedly(Return("exit"));
+	
+	runner.RunCommand();
+}
+
+TEST(mainfunction, read)
+{
+	MockTestRun runner;
+	MockOperator mockOperator;
+	EXPECT_CALL(runner, getInput())
+		.Times(2)
+		.WillOnce(Return("read"))
+	    .WillOnce(Return("0xa"));
+
+	EXPECT_CALL(runner, getOperator(0))
+		.Times(1)
+		.WillRepeatedly(Return(&mockOperator));
+
+	EXPECT_CALL(mockOperator, run(_, _))
+		.Times(1);
+
+	runner.RunCommand();
+}
+
+TEST(mainfunction, help)
+{
+	MockTestRun runner;
+	MockOperator mockOperator;
+	EXPECT_CALL(runner, getInput())
+		.Times(1)
+		.WillRepeatedly(Return("help"));
+
+	EXPECT_CALL(runner, getOperator(1))
+		.Times(1)
+		.WillRepeatedly(Return(&mockOperator));
+
+	EXPECT_CALL(mockOperator, run(_, _))
+		.Times(1);
+
+	runner.RunCommand();
+}
+
 TEST(Help, operationtest)
 {
 	std::stringstream buffer;
