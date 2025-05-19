@@ -12,12 +12,11 @@ class Read : public ITestOperation
 {
 public:
 
-	void run(string command1 = "",string command2 = "") override
+	virtual void run(string command1 = "",string command2 = "") override
 	{
 		cout << "read" << command1 <<endl;
-		return;
 	}
-	virtual string read(string address)
+	string read(string address)
 	{
 		return "error";
 	}
@@ -41,11 +40,11 @@ public:
 class Write : public ITestOperation
 {
 public:
-	void run(string command1 = "", string command2 = "") override
+	virtual void run(string command1 = "", string command2 = "") override
 	{
 		cout << "write" << command1 << endl;
 	}
-	virtual void write(string address, string data)
+	void write(string address, string data)
 	{
 		return;
 	}
@@ -61,17 +60,4 @@ public:
 private:
 	Write* write;
 	Read* read;
-};
-
-
-class SSDTest :public ITestOperation
-{
-public:
-	SSDTest(Write* w, Read* r) : write(w), read(r) {};
-	void run(string command1 = "", string command2 = "") override;
-private:
-	Write* write;
-	Read* read;
-	SSDTest_FullWriteAndReadCompare FullWRiteAndReadCompare(Write*w ,Read *r);
-
 };

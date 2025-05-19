@@ -5,52 +5,28 @@ using namespace std;
 using namespace testing;
 
 
-class MockWriteDriver : public Write {
+class MockWriteDriver_ : public Write {
 public:
     MOCK_METHOD(void, run, (std::string, std::string), (override));
     MOCK_METHOD(void, write, (std::string address, std::string data), ());
 };
 
-class MockReadDriver : public Read {
+class MockReadDriver_ : public Read {
 public:
     MOCK_METHOD(void, run, (std::string, std::string), (override));
-    MOCK_METHOD(std::string, read, (std::string address), ());
+    MOCK_METHOD(void, read, (std::string address), ());
 };
 
 TEST(tester, runtest_InvalidInput)
 {
-    std::streambuf* originalCoutBuffer = std::cout.rdbuf();
+    MockWriteDriver_ mockWrite;
+    MockReadDriver_ mockRead;
 
-    std::stringstream capturedOutput;
-    std::cout.rdbuf(capturedOutput.rdbuf()); 
+    InSequence seq;
 
-    Write write;
-    Read read;
-    SSDTest ssd(&write, &read);
-    ssd.run("1");
-    std::cout.rdbuf(originalCoutBuffer);
+    EXPECT_CALL(mockWrite, run(_, _)).Times(4);
+    EXPECT_CALL(mockRead, run(_,_)).Times(4);
 
-    std::string expectedOutput = "input error\n";
-    EXPECT_EQ(capturedOutput.str(), expectedOutput);
-
+    SSDTest_FullWriteAndReadCompare ssd(&mockWrite, &mockRead);
+    ssd.run("1_","");
 }
-
-
-TEST(tester, runtest_validInput)
-{
-    std::streambuf* originalCoutBuffer = std::cout.rdbuf();
-
-    std::stringstream capturedOutput;
-    std::cout.rdbuf(capturedOutput.rdbuf());
-
-    Write write;
-    Read read;
-    SSDTest ssd(&write, &read);
-    ssd.run("1_");
-    std::cout.rdbuf(originalCoutBuffer);
-
-    std::string expectedOutput = "test1\n";
-    EXPECT_EQ(capturedOutput.str(), expectedOutput);
-
-}
-

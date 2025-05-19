@@ -11,7 +11,7 @@ using namespace std;
 class MockReadDriver : public Read {
 public:
     MOCK_METHOD(string, Read, (string cmd1), ());
-
+    MOCK_METHOD(void, run, (std::string, std::string), (override));
 };
 
 
