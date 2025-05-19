@@ -161,7 +161,7 @@ public:
 
 	virtual void callSSD(string address, string data)
 	{
-		const char* exePath = "SSD.exe";
+		const char* exePath = "ssd";
 		const char* writeCmd = "W";
 
 		std::string command = std::string("\"") + exePath + " " + writeCmd + " " + address + " " + data;
@@ -172,7 +172,30 @@ private:
 
 };
 
-
+class FullWrite : public Write
+{
+public:
+	void run(string command1 = "", string command2 = "") override
+	{
+		fullWrite(command1);
+	}
+	void fullWrite(string data)
+	{
+		try
+		{
+			checkData(data);
+			for (int i = 0; i < 100; i++)
+			{
+				callSSD(to_string(i), data);
+			}
+		}
+		catch (invalid_argument& e)
+		{
+			cout << "error message : " << e.what() << endl;
+		}
+		return;
+	}
+};
 
 class SSDTest_FullWriteAndReadCompare :public ITestOperation
 {
@@ -215,6 +238,7 @@ public:
 		operators[OPERATOR_FULLREAD] = new FullRead;
 		operators[OPERATOR_HELP] = new Help;
 		operators[OPERATOR_WRITE] = new Write;
+		operators[OPERATOR_FULLWRITE] = new FullWrite;
 	}
 	bool RunCommand()
 	{

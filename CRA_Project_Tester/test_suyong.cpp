@@ -225,6 +225,12 @@ public:
     MOCK_METHOD(void, callSSD, (string, string), (override));
 };
 
+class MockFullWriter : public FullWrite
+{
+public:
+    MOCK_METHOD(void, callSSD, (string, string), (override));
+};
+
 TEST(Testwrite, normalWrite)
 {
     MockWriter writer;
@@ -256,4 +262,14 @@ TEST(Testwrite, InvalidWrite2)
         .Times(0);
 
     writer.run(address, data);
+}
+
+TEST(TestFullWrite, NormalOperation)
+{
+    MockFullWriter writer;
+    string data = "0xAAAAAAAA";
+    EXPECT_CALL(writer, callSSD(_, data))
+        .Times(100);
+
+    writer.run(data);
 }
