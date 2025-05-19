@@ -17,16 +17,14 @@ public:
     MOCK_METHOD(void, read, (std::string address), ());
 };
 
-TEST(tester, runtest_InvalidInput)
+TEST(tester, FullWriteAndReadCompareTest)
 {
     MockWriteDriver_ mockWrite;
     MockReadDriver_ mockRead;
 
-    InSequence seq;
-
-    EXPECT_CALL(mockWrite, run(_, _)).Times(4);
-    EXPECT_CALL(mockRead, run(_,_)).Times(4);
+    EXPECT_CALL(mockWrite, run(_, _)).Times(100);
+    EXPECT_CALL(mockRead, run(_, _)).Times(100);
 
     SSDTest_FullWriteAndReadCompare ssd(&mockWrite, &mockRead);
-    ssd.run("1_","");
+    ssd.run("","");
 }
