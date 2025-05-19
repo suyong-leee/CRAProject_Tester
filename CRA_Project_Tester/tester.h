@@ -26,7 +26,7 @@ public:
     return true;
 }
 
-  virtual void run(string command1 = "",string command2 = "") override
+	void run(string command1 = "",string command2 = "") override
 	{
         try
         {
@@ -43,8 +43,7 @@ public:
 
         return;
 	}
-  
-	string read(string address)
+	virtual string read(string address)
 	{
 		return "error";
 	}
@@ -86,6 +85,8 @@ class SSDTest_FullWriteAndReadCompare :public ITestOperation
 public:
 	SSDTest_FullWriteAndReadCompare(Write* w, Read* r) : write(w), read(r) {};
 	void run(string command1 = "", string command2 = "") override;
+	void saveBuffer(int j, std::string buffer, std::string&  writeBuffer);
+	bool CompareBuffer(std::string  writeBuffer, std::string readBuffer);
 private:
 	Write* write;
 	Read* read;
