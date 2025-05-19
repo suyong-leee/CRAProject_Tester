@@ -79,8 +79,7 @@ public:
 		{
 			checkAddress(address);
 			checkData(data);
-
-			cout << "sucess" << endl;
+			callSSD(address, data);
 		}
 		catch (invalid_argument& e)
 		{
@@ -88,6 +87,7 @@ public:
 		}
 		return;
 	}
+
 	bool checkAddress(string address)
 	{
 		if (address.size() > 2)
@@ -101,6 +101,7 @@ public:
 		}
 		return true;
 	}
+
 	bool checkData(string data)
 	{
 		if (data.size() == 11)
@@ -113,6 +114,16 @@ public:
 			else throw invalid_argument("0 ~ 9사이 A~F만 가능");
 		}
 		return true;
+	}
+
+	virtual void callSSD(string address, string data)
+	{
+		const char* exePath = "./SSD.exe";
+		const char* writeCmd = "W";
+
+		std::string command = std::string("\"") + exePath + "\" " + writeCmd + " " + address + " " + data;
+		int result = std::system(command.c_str());
+		return;
 	}
 private:
 

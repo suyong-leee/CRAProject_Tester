@@ -221,7 +221,30 @@ TEST(Testwrite, InvalidWriteData2)
     EXPECT_THROW(writer.checkData("0x111111111"), std::invalid_argument);
 }
 
+class MockWriter : public Write
+{
+public:
+    MOCK_METHOD(void, callSSD, (string, string), (override));
+};
+
 TEST(Testwrite, normalWrite)
 {
-    EXPECT_EQ(1, 1);
+    MockWriter writer;
+    string address = "30";
+    string data = "0xAAAAAAAA";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(1);
+
+    writer.run(address, data);
+}
+
+TEST(Testwrite, InvalidWrite)
+{
+    MockWriter writer;
+    string address = "30";
+    string data = "0xAAAAAG";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(0);
+
+    writer.run(address, data);
 }
