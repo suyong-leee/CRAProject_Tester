@@ -33,8 +33,8 @@ public:
         {
             if (checkCMD(command1))
             {
-				string result = read(command1);
-				if (command1.size() == 1) command1 = "0" + command1;
+		string result = read(command1);
+		if (command1.size() == 1) command1 = "0" + command1;
                 cout << "[Read] LBA " << command1 << " : " << result << endl;
             }
         }
@@ -59,10 +59,10 @@ public:
 	{
 		for (int i = 0; i < 100; i++)
 		{
-			string lba = to_string(i);
-			string result = read(lba);
-			if (lba.size() == 1) lba = "0" + lba;
-			cout << "[Read] LBA " << lba << " : " << result << endl;
+		    string lba = to_string(i);
+		    string result = read(lba);
+	            if (lba.size() == 1) lba = "0" + lba;
+		    cout << "[Read] LBA " << lba << " : " << result << endl;
 		}
 	}
 
