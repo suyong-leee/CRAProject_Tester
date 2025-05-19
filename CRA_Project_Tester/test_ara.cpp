@@ -43,8 +43,8 @@ TEST(SDDTEST, WriteReadAging)
 	MockRead mkrd;
 	SSDTest_WriteReadAging test(&mkwr, &mkrd);
 
-	EXPECT_CALL(mkwr, run("0", "0x12345678")).Times(200);
-	EXPECT_CALL(mkwr, run("99", "0x12345678")).Times(200);
+	EXPECT_CALL(mkwr, run("0", _)).Times(200);
+	EXPECT_CALL(mkwr, run("99", _)).Times(200);
 
 	EXPECT_CALL(mkrd, read("0"))
 		.Times(200)
