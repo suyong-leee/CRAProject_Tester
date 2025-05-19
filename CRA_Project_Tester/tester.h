@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <iostream>
+#include <string>
 using namespace std;
 class ITestOperation
 {
@@ -14,42 +15,85 @@ class Read : public ITestOperation
 public:
     bool checkCMD(string command)
     {
-    if (command.size() > 2)
-    {
-        throw invalid_argument("3자리 이상 불가.");
-    }
-    for (int i = 0; i < command.size(); i++)
-    {
-        if (command[i] >= '0' && command[i] <= '9') continue;
-        else throw invalid_argument("0 ~ 9사이 수만 가능");
-    }
-    return true;
-}
 
-	void run(string command1 = "",string command2 = "") override
-	{
-        try
-        {
-            if (checkCMD(command1))
-            {
-                read(command1);
-                cout << "read" << command1 << endl;
-            }
-        }
-        catch (invalid_argument& e)
-        {
-            cout << "error message : " << e.what() << endl;
-        }
+	    if (command.size() > 2)
+	    {
+		    throw invalid_argument("세 자리 이상 불가.");
+	    }
+	    if (command.size() == 0)
+	    {
+		    throw invalid_argument("한 자리 이상 입력 필수");
+	    }
+	    for (int i = 0; i < command.size(); i++)
+	    {
+		    if (command[i] >= '0' && command[i] <= '9') continue;
+		    else throw invalid_argument("0 ~ 9 사이 수만 가능");
+	    }
+	    return true;
+    }
+
+    void run(string command1 = "",string command2 = "") override
+    {
+       
+		 read(command1);
 
         return;
-	}
-	virtual string read(string address)
-	{
-		return "error";
-	}
+
+    }
+
+    virtual string read(string address)
+    {
+
+		string result;
+
+		try
+		{
+			if (checkCMD(address))
+			{
+				string command = "ssd.exe R " + address;
+				string result;
+
+				// _popen으로 ssd.exe 실행
+				FILE* pipe = _popen(command.c_str(), "r");
+				if (!pipe) {
+					return "error: cannot open pipe";
+				}
+
+				char buffer[128];
+				while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
+					result += buffer;
+				}
+
+				_pclose(pipe);
+
+				if (address.size() == 1) address = "0" + address;
+				cout << "[Read] LBA " << address << " : " << result << endl;
+			}
+		}
+		catch (invalid_argument& e)
+		{
+			cout << "error message : " << e.what() << endl;
+		}
+	return "error";
+    }
+
 };
 
+class FullRead : public Read {
 
+public:
+    virtual void run(string command1 = "", string command2 = "") override
+    {
+        for (int i = 0; i < 100; i++)
+        {
+	    string lba = to_string(i);
+	    string result = read(lba);
+            if (lba.size() == 1) lba = "0" + lba;	
+		cout << "[Read] LBA " << lba << " : " << result << endl;
+	}
+    }
+
+};
 class Help : public ITestOperation
 {
 public:
@@ -154,8 +198,8 @@ public:
 		OPERATOR_FULLWRITE,
 		OPERATOR_READ,
 		PARAM_ONE = OPERATOR_READ,
-
 		OPERATOR_FULLREAD,
+    
 		OPERATOR_EXIT,
 		OPERATOR_HELP,
 
@@ -168,6 +212,7 @@ public:
 	TestRun()
 	{
 		operators[OPERATOR_READ] = new Read;
+		operators[OPERATOR_FULLREAD] = new FullRead;
 		operators[OPERATOR_HELP] = new Help;
 		operators[OPERATOR_WRITE] = new Write;
 	}

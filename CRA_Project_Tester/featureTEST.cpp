@@ -10,17 +10,22 @@ using namespace std;
 
 class MockReadDriver : public Read {
 public:
-    MOCK_METHOD(string, Read, (string cmd1), ());
-    MOCK_METHOD(void, run, (std::string, std::string), (override));
-};
+    MOCK_METHOD(string, read, (string cmd1), (override));
 
+    MOCK_METHOD(void, run, (string, string), (override));
+
+};
+class MockFullRead : public FullRead {
+public:
+    MOCK_METHOD(string, read, (string address), (override));
+};
 
 TEST(SSDTEST, ReadNone) {
 
     MockReadDriver mockDriver;
-    EXPECT_CALL(mockDriver, Read("3")).WillRepeatedly(Return("helloWorld"));
-    //cout << mockDriver.Read("3") << endl;
-    EXPECT_EQ(mockDriver.Read("3"), "helloWorld");
+    EXPECT_CALL(mockDriver, read("3")).WillRepeatedly(Return("helloWorld"));
+
+    EXPECT_EQ(mockDriver.read("3"), "helloWorld");
 }
 
 TEST(SSDTEST, LBAinvalid) {
@@ -43,3 +48,12 @@ TEST(SSDTEST, LBAinvalid3) {
     EXPECT_THROW(mockDriver.checkCMD("1A"), std::invalid_argument);
 }
 
+TEST(FullReadTest, CallsRead100Times) {
+    MockFullRead mock;
+
+    EXPECT_CALL(mock, read(_))  
+        .Times(Exactly(100))
+        .WillRepeatedly(Return("mocked_data"));
+
+    mock.run();
+}

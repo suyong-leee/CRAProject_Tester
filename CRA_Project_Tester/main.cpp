@@ -3,7 +3,7 @@
 
 #include "tester.h"
 
-#define __DEBUG__ (1)
+#define __DEBUG__ (0)
 
 using namespace std;
 using namespace testing;
