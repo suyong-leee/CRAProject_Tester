@@ -118,7 +118,7 @@ public:
 
 	virtual void callSSD(string address, string data)
 	{
-		const char* exePath = "SSD.exe";
+		const char* exePath = "ssd";
 		const char* writeCmd = "W";
 
 		std::string command = std::string("\"") + exePath + " " + writeCmd + " " + address + " " + data;
