@@ -32,8 +32,9 @@ public:
         {
             if (checkCMD(command1))
             {
-                read(command1);
-                cout << "read" << command1 << endl;
+				string result = read(command1);
+				if (command1.size() == 1) command1 = "0" + command1;
+                cout << "[Read] LBA " << command1 << " : " << result << endl;
             }
         }
         catch (invalid_argument& e)
