@@ -17,12 +17,16 @@ public:
     {
     if (command.size() > 2)
     {
-        throw invalid_argument("3자리 이상 불가.");
+        throw invalid_argument("세 자리 이상 불가.");
     }
+	if (command.size() == 0)
+	{
+		throw invalid_argument("한 자리 이상 입력 필수");
+	}
     for (int i = 0; i < command.size(); i++)
     {
         if (command[i] >= '0' && command[i] <= '9') continue;
-        else throw invalid_argument("0 ~ 9사이 수만 가능");
+        else throw invalid_argument("0 ~ 9 사이 수만 가능");
     }
     return true;
 }
