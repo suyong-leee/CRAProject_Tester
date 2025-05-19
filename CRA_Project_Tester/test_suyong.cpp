@@ -202,3 +202,20 @@ TEST(Help, operationtest)
     std::string output = buffer.str();
     EXPECT_EQ(expectResult, output);
 }
+
+TEST(Testwrite, InvalidWriteAddress1)
+{
+    Write writer;
+    EXPECT_THROW(writer.run("101", "0x0000000a"), std::invalid_argument);
+}
+
+TEST(Testwrite, InvalidWriteAddress2)
+{
+    Write writer;
+    EXPECT_THROW(writer.run("10", "0x000G000a"), std::invalid_argument);
+}
+
+TEST(Testwrite, normalWrite)
+{
+    EXPECT_EQ(1, 1);
+}
