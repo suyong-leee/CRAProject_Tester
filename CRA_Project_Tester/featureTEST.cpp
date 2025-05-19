@@ -23,7 +23,7 @@ TEST(SSDTEST, ReadNone) {
 	EXPECT_EQ(mockDriver.Read("3"), "helloWorld");
 }
 
-TEST(SSDTEST, LSBinvalid) {
+TEST(SSDTEST, LBAinvalid) {
 
 	MockReadDriver mockDriver;
 	EXPECT_NO_THROW({
@@ -32,13 +32,13 @@ TEST(SSDTEST, LSBinvalid) {
 		});
 }
 
-TEST(SSDTEST, LSBinvalid2) {
+TEST(SSDTEST, LBAinvalid2) {
 
 	MockReadDriver mockDriver;
 	EXPECT_THROW(mockDriver.checkCMD("123"), std::invalid_argument);
 }
 
-TEST(SSDTEST, LSBinvalid3) {
+TEST(SSDTEST, LBAinvalid3) {
 
 	MockReadDriver mockDriver;
 	EXPECT_THROW(mockDriver.checkCMD("1A"), std::invalid_argument);
