@@ -10,8 +10,8 @@ using namespace std;
 
 class MockReadDriver : public Read {
 public:
-    MOCK_METHOD(string,Read, (string cmd1), (override));
-    MOCK_METHOD(void, run, (std::string, std::string), (override));
+    MOCK_METHOD(string, read, (string cmd1), (override));
+    MOCK_METHOD(void, run, (string, string), (override));
 };
 class MockFullRead : public FullRead {
 public:
@@ -21,9 +21,9 @@ public:
 TEST(SSDTEST, ReadNone) {
 
     MockReadDriver mockDriver;
-    EXPECT_CALL(mockDriver, Read("3")).WillRepeatedly(Return("helloWorld"));
+    EXPECT_CALL(mockDriver, read("3")).WillRepeatedly(Return("helloWorld"));
     //cout << mockDriver.Read("3") << endl;
-    EXPECT_EQ(mockDriver.Read("3"), "helloWorld");
+    EXPECT_EQ(mockDriver.read("3"), "helloWorld");
 }
 
 TEST(SSDTEST, LBAinvalid) {
