@@ -209,12 +209,40 @@ private:
 	Read* read;
 };
 
+
+class SSDTest_PartialLBAWrite :public ITestOperation, public exception
+{
+public:
+	SSDTest_PartialLBAWrite(Write* w, Read* r) : mWrite(w), mRead(r) {};
+	SSDTest_PartialLBAWrite() : mWrite(nullptr), mRead(nullptr) {};
+	void run(string param1, string param2) override;
+
+private:
+	Write* mWrite;
+	Read* mRead;
+};
+
+class SSDTest_WriteReadAging :public ITestOperation, public exception
+{
+public:
+	SSDTest_WriteReadAging(Write* w, Read* r) : mWrite(w), mRead(r) {};
+	SSDTest_WriteReadAging() : mWrite(nullptr), mRead(nullptr) {};
+	void run(string param1, string param2) override;
+
+private:
+	Write* mWrite;
+	Read* mRead;
+
+	string createRadomString(void);
+};
+
+
 class TestRun
 {
 public:
 	enum operatorOrder
 	{
-		
+
 		OPERATOR_WRITE = 0,
 		PARAM_TWO = OPERATOR_WRITE,
 
@@ -222,7 +250,7 @@ public:
 		OPERATOR_READ,
 		PARAM_ONE = OPERATOR_READ,
 		OPERATOR_FULLREAD,
-    
+
 		OPERATOR_EXIT,
 		OPERATOR_HELP,
 
@@ -239,6 +267,10 @@ public:
 		operators[OPERATOR_HELP] = new Help;
 		operators[OPERATOR_WRITE] = new Write;
 		operators[OPERATOR_FULLWRITE] = new FullWrite;
+
+		operators[SCENARIO_1] = new SSDTest_FullWriteAndReadCompare(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
+		operators[SCENARIO_2] = new SSDTest_PartialLBAWrite(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
+		operators[SCENARIO_3] = new SSDTest_WriteReadAging(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
 	}
 	bool RunCommand()
 	{
@@ -250,7 +282,7 @@ public:
 			cout << "INVALID COMMAND" << endl;
 			return true;
 		}
-		
+
 		if (operationOrder == OPERATOR_EXIT)
 		{
 			return false;
@@ -261,7 +293,7 @@ public:
 		currentOperation = getOperator(operationOrder);
 
 		currentOperation->run(parameter[0], parameter[1]);
-		
+
 		return true;
 	}
 
@@ -270,15 +302,15 @@ public:
 		cin >> value;
 		return value;
 	}
-	
+
 	virtual ITestOperation* getOperator(int operation)
 	{
 		return operators[operation];
 	}
 private:
 	ITestOperation* currentOperation = nullptr;
-	ITestOperation* operators[NUM_OF_OPERATOR] = {nullptr,};
-	string parameter[2] = {"",};
+	ITestOperation* operators[NUM_OF_OPERATOR] = { nullptr, };
+	string parameter[2] = { "", };
 
 	int getOperationNumber(const string& command)
 	{
@@ -313,30 +345,4 @@ private:
 		}
 		return;
 	}
-};
-
-class SSDTest_PartialLBAWrite :public ITestOperation, public exception
-{
-public:
-	SSDTest_PartialLBAWrite(Write* w, Read* r) : mWrite(w), mRead(r) {};
-	SSDTest_PartialLBAWrite() : mWrite(nullptr), mRead(nullptr) {};
-	void run(string param1, string param2) override;
-
-private:
-	Write* mWrite;
-	Read* mRead;
-};
-
-class SSDTest_WriteReadAging :public ITestOperation, public exception
-{
-public:
-	SSDTest_WriteReadAging(Write* w, Read* r) : mWrite(w), mRead(r) {};
-	SSDTest_WriteReadAging() : mWrite(nullptr), mRead(nullptr) {};
-	void run(string param1, string param2) override;
-
-private:
-	Write* mWrite;
-	Read* mRead;
-
-	string createRadomString(void);
 };
