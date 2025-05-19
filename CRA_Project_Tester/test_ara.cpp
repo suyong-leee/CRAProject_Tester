@@ -16,17 +16,23 @@ public:
 };
 
 
-TEST(SDDTEST, Test3)
+TEST(SDDTEST, PartialLBAWrite)
 {
 	MockWrite mkwr;
 	MockRead mkrd;
-	SSDTest_PartialLBAWrite ssdtest3(&mkwr, &mkrd);
+	SSDTest_PartialLBAWrite test(&mkwr, &mkrd);
 
-	EXPECT_CALL(mkwr, run("4", "0x12345678"));
-	EXPECT_CALL(mkwr, run("0", "0x12345678"));
-	EXPECT_CALL(mkwr, run("3", "0x12345678"));
-	EXPECT_CALL(mkwr, run("2", "0x12345678"));
-	EXPECT_CALL(mkwr, run("1", "0x12345678"));
+	EXPECT_CALL(mkwr, run("4", "0x12345678")).Times(30);
+	EXPECT_CALL(mkwr, run("0", "0x12345678")).Times(30);
+	EXPECT_CALL(mkwr, run("3", "0x12345678")).Times(30);
+	EXPECT_CALL(mkwr, run("2", "0x12345678")).Times(30);
+	EXPECT_CALL(mkwr, run("1", "0x12345678")).Times(30);
 
-	ssdtest3.run("","");
+	EXPECT_CALL(mkrd, read("0")).Times(30);
+	EXPECT_CALL(mkrd, read("1")).Times(30);
+	EXPECT_CALL(mkrd, read("2")).Times(30);
+	EXPECT_CALL(mkrd, read("3")).Times(30);
+	EXPECT_CALL(mkrd, read("4")).Times(30);
+
+	test.run("","");
 }
