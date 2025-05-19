@@ -161,6 +161,24 @@ TEST(mainfunction, senariocommand1)
     EXPECT_EQ(true, runner.RunCommand());
 }
 
+TEST(mainfunction, senariocommand2)
+{
+    MockTestRun runner;
+    MockOperator mockOperator;
+    EXPECT_CALL(runner, getInput())
+        .Times(1)
+        .WillOnce(Return("1_FullWriteAndReadCompare"));
+
+    EXPECT_CALL(runner, getOperator(TestRun::SCENARIO_1))
+        .Times(1)
+        .WillRepeatedly(Return(&mockOperator));
+
+    EXPECT_CALL(mockOperator, run(_, _))
+        .Times(1);
+
+    EXPECT_EQ(true, runner.RunCommand());
+}
+
 
 TEST(Help, operationtest)
 {
