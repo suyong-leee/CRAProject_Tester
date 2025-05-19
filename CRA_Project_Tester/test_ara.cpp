@@ -1,5 +1,6 @@
 #include "gmock/gmock.h"
-#include "tester.h"
+#include "testShell.h"
+#include "testScript.h"
 #include <string>
 
 using namespace testing;

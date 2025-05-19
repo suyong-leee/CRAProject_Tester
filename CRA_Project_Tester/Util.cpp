@@ -9,7 +9,7 @@ string createRadomString(void) {
 	return "0x" + ss.str();
 }
 
-bool CompareData(string  writeData, string readData)
+bool CompareBuffer(string  writeData, string readData)
 {
 	if (writeData == readData) {
 		return true;
