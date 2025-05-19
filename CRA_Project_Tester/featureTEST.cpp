@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include "tester.h"
-
+#include "test_run.cpp"
 using namespace testing;
 using namespace std;
 
@@ -10,10 +10,13 @@ using namespace std;
 
 class MockReadDriver : public Read {
 public:
-    MOCK_METHOD(string, Read, (string cmd1), ());
+    MOCK_METHOD(string,Read, (string cmd1), (override));
     MOCK_METHOD(void, run, (std::string, std::string), (override));
 };
-
+class MockFullRead : public FullRead {
+public:
+    MOCK_METHOD(string, read, (string address), (override));
+};
 
 TEST(SSDTEST, ReadNone) {
 
@@ -43,4 +46,12 @@ TEST(SSDTEST, LBAinvalid3) {
     EXPECT_THROW(mockDriver.checkCMD("1A"), std::invalid_argument);
 }
 
+TEST(FullReadTest, CallsRead100Times) {
+    MockFullRead mock;
 
+    EXPECT_CALL(mock, read(_))  
+        .Times(Exactly(100))
+        .WillRepeatedly(Return("mocked_data"));
+
+    mock.run();
+}

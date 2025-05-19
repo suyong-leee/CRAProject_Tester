@@ -46,7 +46,7 @@ public:
         return;
 	}
   
-	string read(string address)
+	 virtual string read(string address)
 	{
 		return "error";
 	}
