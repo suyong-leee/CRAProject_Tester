@@ -130,8 +130,12 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="featureTEST.cpp" />
     <ClCompile Include="test_suyong.cpp" />
-    <ClCompile Include="tester.cpp" />
-    <ClCompile Include="test_run.cpp" />
+    <ClCompile Include="tester.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/TP %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <ClCompile Include="test_run.cpp">
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/TP %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tester.h" />

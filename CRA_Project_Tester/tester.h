@@ -17,7 +17,7 @@ public:
 		cout << "read" << command1 <<endl;
 		return;
 	}
-	string read(string address)
+	virtual string read(string address)
 	{
 		return "error";
 	}
@@ -45,21 +45,33 @@ public:
 	{
 		cout << "write" << command1 << endl;
 	}
-	void write(string address, string data)
+	virtual void write(string address, string data)
 	{
 		return;
 	}
 };
 
+
+
+class SSDTest_FullWriteAndReadCompare :public ITestOperation
+{
+public:
+	SSDTest_FullWriteAndReadCompare(Write* w, Read* r) : write(w), read(r) {};
+	void run(string command1 = "", string command2 = "") override;
+private:
+	Write* write;
+	Read* read;
+};
+
+
 class SSDTest :public ITestOperation
 {
 public:
-
-	// ITestOperation을(를) 통해 상속됨
+	SSDTest(Write* w, Read* r) : write(w), read(r) {};
 	void run(string command1 = "", string command2 = "") override;
 private:
-	void FullWriteAndReadCompare();
-	void PartialLBAWrite();
-	void WriteReadAging();
-};
+	Write* write;
+	Read* read;
+	SSDTest_FullWriteAndReadCompare FullWRiteAndReadCompare(Write*w ,Read *r);
 
+};
