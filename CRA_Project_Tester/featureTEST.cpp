@@ -17,8 +17,8 @@ public:
 
 TEST(SSDTEST, ReadNone) {
 
-	MockReadDriver mockDriver;
-	EXPECT_CALL(mockDriver, Read("3")).WillRepeatedly(Return("helloWorld"));
+    MockReadDriver mockDriver;
+    EXPECT_CALL(mockDriver, Read("3")).WillRepeatedly(Return("helloWorld"));
 	//cout << mockDriver.Read("3") << endl;
 	EXPECT_EQ(mockDriver.Read("3"), "helloWorld");
 }
