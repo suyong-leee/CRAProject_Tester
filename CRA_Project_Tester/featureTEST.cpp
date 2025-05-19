@@ -19,8 +19,8 @@ TEST(SSDTEST, ReadNone) {
 
     MockReadDriver mockDriver;
     EXPECT_CALL(mockDriver, Read("3")).WillRepeatedly(Return("helloWorld"));
-	//cout << mockDriver.Read("3") << endl;
-	EXPECT_EQ(mockDriver.Read("3"), "helloWorld");
+    //cout << mockDriver.Read("3") << endl;
+    EXPECT_EQ(mockDriver.Read("3"), "helloWorld");
 }
 
 TEST(SSDTEST, LBAinvalid) {
@@ -28,7 +28,7 @@ TEST(SSDTEST, LBAinvalid) {
     MockReadDriver mockDriver;
     EXPECT_NO_THROW({
     bool result = mockDriver.checkCMD("12");
-        EXPECT_TRUE(result);
+    EXPECT_TRUE(result);
     });
 }
 
