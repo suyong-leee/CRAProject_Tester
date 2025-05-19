@@ -140,9 +140,11 @@
     <ClCompile Include="tester.cpp">
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/TP %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="tester.h" />
+    <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

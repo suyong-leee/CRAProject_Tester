@@ -198,8 +198,6 @@ class SSDTest_FullWriteAndReadCompare :public ITestOperation
 public:
 	SSDTest_FullWriteAndReadCompare(Write* w, Read* r) : write(w), read(r) {};
 	void run(string command1 = "", string command2 = "") override;
-	void saveBuffer(int j, std::string buffer, std::string&  writeBuffer);
-	bool CompareBuffer(std::string  writeBuffer, std::string readBuffer);
 private:
 	Write* write;
 	Read* read;
@@ -228,8 +226,6 @@ public:
 private:
 	Write* mWrite;
 	Read* mRead;
-
-	string createRadomString(void);
 };
 
 
@@ -238,7 +234,7 @@ class TestRun
 public:
 	enum operatorOrder
 	{
-
+		
 		OPERATOR_WRITE = 0,
 		PARAM_TWO = OPERATOR_WRITE,
 
@@ -246,7 +242,7 @@ public:
 		OPERATOR_READ,
 		PARAM_ONE = OPERATOR_READ,
 		OPERATOR_FULLREAD,
-
+    
 		OPERATOR_EXIT,
 		OPERATOR_HELP,
 
@@ -278,7 +274,7 @@ public:
 			cout << "INVALID COMMAND" << endl;
 			return true;
 		}
-
+		
 		if (operationOrder == OPERATOR_EXIT)
 		{
 			return false;
@@ -289,7 +285,7 @@ public:
 		currentOperation = getOperator(operationOrder);
 
 		currentOperation->run(parameter[0], parameter[1]);
-
+		
 		return true;
 	}
 
@@ -298,7 +294,7 @@ public:
 		cin >> value;
 		return value;
 	}
-
+	
 	virtual ITestOperation* getOperator(int operation)
 	{
 		return operators[operation];
