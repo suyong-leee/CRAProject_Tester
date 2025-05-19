@@ -68,7 +68,7 @@ class TestRun
 public:
 	enum operatorOrder
 	{
-		OPERATOR_WRTIE = 0,
+		OPERATOR_WRITE = 0,
 		OPERATOR_READ,
 		OPERATOR_EXIT,
 		OPERATOR_HELP,
@@ -108,6 +108,7 @@ public:
 		else
 		{
 			cout << "INVALID COMMAND" << endl;
+			return true;
 		}
 		currentOperation->run(param1, param2);
 		return true;

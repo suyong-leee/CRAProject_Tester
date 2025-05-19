@@ -64,6 +64,28 @@ TEST(mainfunction, help)
     EXPECT_EQ(true,runner.RunCommand());
 }
 
+TEST(mainfunction, write)
+{
+    MockTestRun runner;
+    MockOperator mockOperator;
+    EXPECT_CALL(runner, getInput())
+        .Times(3)
+        .WillOnce(Return("write"))
+        .WillOnce(Return("0xa"))
+        .WillOnce(Return("0xa"));
+
+    EXPECT_CALL(runner, getOperator(TestRun::OPERATOR_WRITE))
+        .Times(1)
+        .WillRepeatedly(Return(&mockOperator));
+
+    EXPECT_CALL(mockOperator, run(_, _))
+        .Times(1);
+
+    EXPECT_EQ(true, runner.RunCommand());
+}
+
+
+
 TEST(Help, operationtest)
 {
     std::stringstream buffer;
