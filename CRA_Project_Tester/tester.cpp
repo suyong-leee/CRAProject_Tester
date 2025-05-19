@@ -8,7 +8,7 @@ void SSDTest::FullWriteAndReadCompare()
 {
 }
 
-void SSDTest::PartialLBAWrite()
+void SSDTest_PartialLBAWrite::run(string param1, string param2)
 {
 }
 
