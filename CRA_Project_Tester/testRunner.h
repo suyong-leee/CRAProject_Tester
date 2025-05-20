@@ -9,11 +9,13 @@ public:
 	{
 
 		OPERATOR_WRITE = 0,
-		PARAM_TWO = OPERATOR_WRITE,
+		OPERATOR_ERASE,
+		PARAM_TWO = OPERATOR_ERASE,
 
 		OPERATOR_FULLWRITE,
 		OPERATOR_READ,
 		PARAM_ONE = OPERATOR_READ,
+
 		OPERATOR_FULLREAD,
 
 		OPERATOR_EXIT,
@@ -36,6 +38,8 @@ public:
 		operators[SCENARIO_1] = new SSDTest_FullWriteAndReadCompare(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
 		operators[SCENARIO_2] = new SSDTest_PartialLBAWrite(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
 		operators[SCENARIO_3] = new SSDTest_WriteReadAging(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
+	
+		operators[OPERATOR_ERASE] = new Erase;
 	}
 	bool RunCommand()
 	{
@@ -88,6 +92,7 @@ private:
 		else if (command == "1_" || command == "1_FullWriteAndReadCompare") return SCENARIO_1;
 		else if (command == "2_" || command == "2_PartialLBAWrite") return SCENARIO_2;
 		else if (command == "3_" || command == "3_WriteReadAging") return SCENARIO_3;
+		else if (command == "erase") return OPERATOR_ERASE;
 		else return -1;
 	}
 
