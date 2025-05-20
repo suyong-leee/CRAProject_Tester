@@ -10,44 +10,7 @@ public:
 	virtual void run(string command = "", string command2 = "") = 0;
 
 };
-class EraseRange : public ITestOperation
-{
-public:
-	bool checkLBA(string LBA)
-	{
-		if (LBA.size() > 2)
-		{
-			throw invalid_argument("세 자리 이상 불가.");
-		}
-		if (LBA.size() == 0)
-		{
-			throw invalid_argument("한 자리 이상 입력 필수");
-		}
-		for (int i = 0; i < LBA.size(); i++)
-		{
-			if (LBA[i] >= '0' && LBA[i] <= '9') continue;
-			else throw invalid_argument("0 ~ 9 사이 수만 가능");
-		}
-		return true;
-	}
-	void run(string command1 = "", string command2 = "") override
-	{
-		try
-		{
-			if (checkLBA(command1))
-			{
-				string command = "ssd.exe erase_Range " + command1 + " " + command2;
-				cout << "erase_Range command is " << command << endl;
-			}
-		}
-		catch (invalid_argument& e)
-		{
-			cout << "error message : " << e.what() << endl;
-		}
-		return;
-	}
 
-};
 class Erase : public ITestOperation
 {
 public:
@@ -68,6 +31,15 @@ public:
 		}
 		return true;
 	}
+	
+	void erase(string command)
+	{
+		FILE* pipe = _popen(command.c_str(), "r");
+		if (!pipe) {
+			cout << "erase cmd error: " << command << endl;
+		}
+		_pclose(pipe);
+	}
 	void run(string command1 = "", string command2 = "") override
 	{
 		try
@@ -75,7 +47,33 @@ public:
 			if (checkLBA(command1))
 			{
 				string command = "ssd.exe E " + command1 + " "+ command2;
-				cout << "erase command is " << command << endl;
+				erase(command);
+				//cout << "erase command is " << command << endl;
+			}
+		}
+		catch (invalid_argument& e)
+		{
+			cout << "error message : " << e.what() << endl;
+		}
+		return;
+	}
+
+};
+class EraseRange : public Erase
+{
+public:
+	void run(string command1 = "", string command2 = "") override
+	{
+		try
+		{
+			if (checkLBA(command1) && checkLBA(command2))
+			{
+				int start = stoi(command1), end = stoi(command2);
+				string command = "ssd.exe E ";
+				if (start > end) command = command + command2 + " " + to_string(start - end + 1);
+				else command = command + command1 + " " + to_string(end - start + 1);
+				erase(command);
+				cout << "erase_Range command is " << command << endl;
 			}
 		}
 		catch (invalid_argument& e)
@@ -273,13 +271,5 @@ public:
 			cout << "error message : " << e.what() << endl;
 		}
 		return;
-	}
-};
-
-class Erase : public ITestOperation
-{
-public:
-	void run(string command1 = "", string command2 = "") override
-	{
 	}
 };
