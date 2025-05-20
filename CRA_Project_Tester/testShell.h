@@ -79,7 +79,7 @@ public:
 		{
 			cout << "error message : " << e.what() << endl;
 		}
-	return "error";
+	return result;
     }
 
 };
