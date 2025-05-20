@@ -1,6 +1,6 @@
 ﻿#include "gmock/gmock.h"
 #include <string>
-#include "tester.h"
+#include "testRunner.h"
 using namespace std;
 using namespace testing;
 

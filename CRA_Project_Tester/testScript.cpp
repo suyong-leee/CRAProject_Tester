@@ -1,7 +1,7 @@
-﻿#include "tester.h"
-#include <string>
+﻿#include "testShell.h"
+#include "Util.h"
+#include "testScript.h"
 #include <stdexcept>
-#include <sstream>
 
 using namespace std;
 
@@ -16,34 +16,19 @@ void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 	//• 위와 같은 규칙으로 전체 영역에 대해 Full Write + Read Compare를 수행한다.
 	string writeBuffer[100];
 	string readBuffer;
-	string buffer = "0x11111111";
+	string buffer = createRadomString();
 	for (int i = 0; i < 100; i += 5)
 	{
 		for (int j = i; j < i + 5; j++) {
-			saveBuffer(j, buffer, writeBuffer[j]);
+			write->run(to_string(j), buffer);
+			writeBuffer[j] = buffer;
 		}
 		for (int j = i; j < i + 5; j++) {
 			readBuffer = read->read(to_string(j));
-			if (CompareBuffer(writeBuffer[j], readBuffer)) continue;
+			if (CompareData(writeBuffer[j], readBuffer)) continue;
 		}
 	}
 
-}
-
-void SSDTest_FullWriteAndReadCompare::saveBuffer(int j, std::string buffer, std::string&  writeBuffer)
-{
-	write->run(to_string(j), buffer);
-	writeBuffer = buffer;
-}
-
-bool SSDTest_FullWriteAndReadCompare::CompareBuffer(std::string  writeBuffer,  std::string readBuffer)
-{
-	if (writeBuffer == readBuffer) {
-		return true;
-	}
-	else {
-		throw exception("Compare Failed\n");
-	}
 }
 
 void SSDTest_PartialLBAWrite::run(string param1, string param2)
@@ -93,12 +78,4 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 		if (mRead->read("0") != mRead->read("99")) throw std::exception();
 	}
 }
-
-string SSDTest_WriteReadAging::createRadomString(void) {
-	stringstream ss;
-	unsigned int randomNum = rand();
-
-	randomNum = randomNum << 16 | rand();
-	ss << hex << randomNum;
-	return "0x" + ss.str();
-}
+ 

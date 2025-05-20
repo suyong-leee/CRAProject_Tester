@@ -42,7 +42,7 @@ TEST_F(SSDTestFixture, FullWriteAndReadCompareFailTest) {
 }
 
 TEST_F(SSDTestFixture, FullWriteAndReadCompareTest) {
-    EXPECT_CALL(mockWrite, run(_, _)).Times(::testing::AnyNumber());
+    EXPECT_CALL(mockWrite, run(_, "0x11111111")).Times(::testing::AnyNumber());
     EXPECT_CALL(mockRead, read(_))
         .Times(::testing::AnyNumber())
         .WillRepeatedly(Return("0x11111111"));
