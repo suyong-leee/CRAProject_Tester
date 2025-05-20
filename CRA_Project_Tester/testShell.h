@@ -107,8 +107,6 @@ public:
 				int size = abs(start - end) + 1;
 				if (start > end) erase(command2, to_string(size));
 				else erase(command1, to_string(size));
-			
-				//cout << "erase_Range command is " << command << endl;
 			}
 		}
 		catch (invalid_argument& e)
