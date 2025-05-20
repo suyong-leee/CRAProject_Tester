@@ -156,7 +156,6 @@ public:
 			if (checkLBA(address))
 			{
 				string command = "ssd.exe R " + address;
-				string result;
 
 				FILE* pipe = _popen(command.c_str(), "r");
 				if (!pipe) {

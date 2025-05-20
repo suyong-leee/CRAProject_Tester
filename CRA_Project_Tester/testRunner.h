@@ -15,6 +15,7 @@ public:
 
 		OPERATOR_FULLWRITE,
 		OPERATOR_READ,
+		FULL_SCENARIO,
 		PARAM_ONE = OPERATOR_READ,
 
 		OPERATOR_FULLREAD,
@@ -42,6 +43,8 @@ public:
 	
 		operators[OPERATOR_ERASE] = new Erase;
 		operators[OPERATOR_ERASE_RANGE] = new EraseRange;
+
+		operators[FULL_SCENARIO] = new SSDTest_FullScenario;
 	}
 	bool RunCommand()
 	{
@@ -94,8 +97,12 @@ private:
 		else if (command == "1_" || command == "1_FullWriteAndReadCompare") return SCENARIO_1;
 		else if (command == "2_" || command == "2_PartialLBAWrite") return SCENARIO_2;
 		else if (command == "3_" || command == "3_WriteReadAging") return SCENARIO_3;
+
 		else if (command == "erase") return OPERATOR_ERASE;
 		else if (command == "erase_range") return OPERATOR_ERASE_RANGE;
+
+		else if (command.find(".txt") != string::npos) return FULL_SCENARIO;
+
 		else return -1;
 	}
 
