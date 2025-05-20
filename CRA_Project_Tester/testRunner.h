@@ -41,7 +41,7 @@ public:
 		operators[SCENARIO_3] = new SSDTest_WriteReadAging(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
 	
 		operators[OPERATOR_ERASE] = new Erase;
-		operators[OPERATOR_ERASE_RANGE] = new Erase_Range;
+		operators[OPERATOR_ERASE_RANGE] = new EraseRange;
 	}
 	bool RunCommand()
 	{
