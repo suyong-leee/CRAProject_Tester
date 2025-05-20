@@ -10,6 +10,29 @@ public:
 	virtual void run(string command = "", string command2 = "") = 0;
 
 };
+class Flush : public ITestOperation
+{
+public:
+
+	void flush()
+	{
+		string command = "ssd.exe F";
+
+		FILE* pipe = _popen(command.c_str(), "r");
+		if (!pipe) {
+			cout <<  "error Flush : cannot open pipe";
+		}
+
+		_pclose(pipe);
+
+	}
+	void run(string command1 = "", string command2 = "") override
+	{
+		flush();
+	}
+};
+
+
 
 //example
 class Read : public ITestOperation
@@ -200,10 +223,3 @@ public:
 	}
 };
 
-class Erase : public ITestOperation
-{
-public:
-	void run(string command1 = "", string command2 = "") override
-	{
-	}
-};
