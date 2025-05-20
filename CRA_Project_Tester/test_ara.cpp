@@ -21,7 +21,7 @@ public:
 	MOCK_METHOD(void, run, (string, string), (override));
 };
 
-TEST(SDDTEST, PartialLBAWrite)
+TEST(SDDTEST, DISABLED_PartialLBAWrite)
 {
 	/*
 	* To perform this test,
@@ -60,8 +60,16 @@ TEST(SDDTEST, PartialLBAWrite)
 	test.run("", "");
 }
 
-TEST(SDDTEST, PartialLBAWrite_exception)
+TEST(SDDTEST, DISABLED_PartialLBAWrite_exception)
 {
+	/*
+	* To perform this test,
+	* modify the createRandomString function in Util.cpp as below and perform this test.
+	* string createRandomString(void)
+	* {
+	*     return "0x12345678"
+	* }
+	*/
 	MockWrite mkwr;
 	MockRead mkrd;
 	SSDTest_PartialLBAWrite test(&mkwr, &mkrd);
