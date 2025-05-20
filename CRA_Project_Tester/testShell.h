@@ -43,15 +43,43 @@ public:
 		*/
 		cout << "Erase command is " << command << endl;
 	}
+	void changeLBAandSIZE(int& lba, int& size)
+	{
+		int end = lba;
+		size = abs(size);
+		lba = lba - size + 1;
+		if (lba < 0)
+		{
+			lba = 0;
+			size = end + 1;
+		}
+	}
 	void run(string command1 = "", string command2 = "") override
 	{
 		try
 		{
 			if (checkLBA(command1))
 			{
-				string command = "ssd.exe E " + command1 + " "+ command2;
-				erase(command);
-				//cout << "erase command is " << command << endl;
+				string command;
+				int lba = stoi(command1), size = stoi(command2);
+				if(size < 0)
+				{
+					changeLBAandSIZE(lba, size);
+				}
+
+				int cycle = size / 10;
+				int cycleSize = 10;
+				int remainSize = size;
+
+				for (int i = 0; i <= cycle; i++)
+				{
+					command = "ssd.exe E ";
+					if (remainSize < 10) cycleSize = remainSize;
+					command = command + to_string(lba) + " " + to_string(cycleSize);
+					erase(command);
+					remainSize -= 10;
+					lba += 10;
+				}
 			}
 		}
 		catch (invalid_argument& e)
