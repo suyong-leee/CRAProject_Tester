@@ -14,10 +14,10 @@ void Logger::print(int type, std::string function, std::string msg)
         << std::setw(2) << std::setfill('0') << (localTime.tm_mon + 1) << "."
         << std::setw(2) << std::setfill('0') << localTime.tm_mday << " "
         << std::setw(2) << std::setfill('0') << localTime.tm_hour << ":"
-        << std::setw(2) << std::setfill(' ') << localTime.tm_min << "] ";
+        << std::setw(2) << std::setfill('0') << localTime.tm_min << "] ";
 
     std::string fullFunc = function + "( )";
-    oss << std::left << std::setw(40) << fullFunc; 
+    oss << std::left << std::setw(40) << std::setfill(' ') << fullFunc;
     oss << ": " << msg;
 
     std::ifstream file(logFileName, std::ios::ate | std::ios::binary);
