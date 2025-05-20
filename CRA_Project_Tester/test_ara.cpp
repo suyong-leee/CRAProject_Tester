@@ -23,6 +23,14 @@ public:
 
 TEST(SDDTEST, PartialLBAWrite)
 {
+	/*
+	* To perform this test,
+	* modify the createRandomString function in Util.cpp as below and perform this test.
+	* string createRandomString(void)
+	* {
+	*     return "0x12345678"
+	* }
+	*/
 	MockWrite mkwr;
 	MockRead mkrd;
 	SSDTest_PartialLBAWrite test(&mkwr, &mkrd);
@@ -33,11 +41,21 @@ TEST(SDDTEST, PartialLBAWrite)
 	EXPECT_CALL(mkwr, run("2", "0x12345678")).Times(30);
 	EXPECT_CALL(mkwr, run("1", "0x12345678")).Times(30);
 
-	EXPECT_CALL(mkrd, read("0")).Times(30);
-	EXPECT_CALL(mkrd, read("1")).Times(30);
-	EXPECT_CALL(mkrd, read("2")).Times(30);
-	EXPECT_CALL(mkrd, read("3")).Times(30);
-	EXPECT_CALL(mkrd, read("4")).Times(30);
+	EXPECT_CALL(mkrd, read("0"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("1"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("2"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("3"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("4"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
 
 	test.run("", "");
 }
