@@ -1,5 +1,6 @@
 #pragma once
 #include "testShell.h"
+
 class SSDTest_FullWriteAndReadCompare :public ITestOperation
 {
 public:
@@ -48,4 +49,10 @@ private:
 	Erase* mErase;
 
 	void WriteAndErase(int start_addr);
+};
+
+class SSDTest_FullScenario :public ITestOperation, public exception
+{
+public:
+	void run(string file_name, string param2) override;
 };
