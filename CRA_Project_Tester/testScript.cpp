@@ -78,4 +78,41 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 		if (mRead->read("0") != mRead->read("99")) throw std::exception();
 	}
 }
- 
+
+void SSDTest_EraseAndWriteAging::run(string param1, string param2)
+{
+	if (mWrite == nullptr)    mWrite = new Write;
+	if (mRead == nullptr)    mRead = new Read;
+	if (mErase == nullptr)    mErase = new Erase;
+
+	mErase->run("0");
+	mErase->run("1");
+	mErase->run("2");
+
+	for (int loop = 0; loop < 30; loop++) {
+		WriteAndErase(2);
+		WriteAndErase(4);
+		WriteAndErase(6);
+	}
+}
+
+void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
+{
+	string wdata = createRadomString();
+	string rdata, ov_rdata;
+
+	// s1. write
+	mWrite->run(to_string(start_addr), wdata);
+	rdata = mRead->read(to_string(start_addr));
+
+	mWrite->run(to_string(start_addr), wdata);
+	ov_rdata = mRead->read(to_string(start_addr));
+
+	// s2. ReadCompare 
+	if (rdata != ov_rdata) throw std::exception();
+
+	// s3. erase
+	mErase->run(to_string(start_addr));
+	mErase->run(to_string(start_addr + 1));
+	mErase->run(to_string(start_addr + 2));
+}

@@ -193,3 +193,10 @@ public:
 	}
 };
 
+class Erase : public ITestOperation
+{
+public:
+	void run(string command1 = "", string command2 = "") override
+	{
+	}
+};
