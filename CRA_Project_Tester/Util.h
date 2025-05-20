@@ -8,4 +8,5 @@
 using namespace std;
 string createRandomString(void);
 bool CompareData(string  writeBuffer, string readBuffer);
+bool ends_with(const std::string& str, const std::string& suffix);
 #endif
