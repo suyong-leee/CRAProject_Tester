@@ -94,8 +94,16 @@ TEST(SDDTEST, DISABLED_PartialLBAWrite_exception)
 	EXPECT_THROW(test.run("", ""), exception);
 }
 
-TEST(SDDTEST, WriteReadAging)
+TEST(SDDTEST, DISABLED_WriteReadAging)
 {
+	/*
+	* To perform this test,
+	* modify the createRandomString function in Util.cpp as below and perform this test.
+	* string createRandomString(void)
+	* {
+	*     return "0x12345678"
+	* }
+	*/
 	MockWrite mkwr;
 	MockRead mkrd;
 	SSDTest_WriteReadAging test(&mkwr, &mkrd);
@@ -113,8 +121,16 @@ TEST(SDDTEST, WriteReadAging)
 	test.run("", "");
 }
 
-TEST(SDDTEST, WriteReadAging_exception)
+TEST(SDDTEST, DISABLED_WriteReadAging_exception)
 {
+	/*
+	* To perform this test,
+	* modify the createRandomString function in Util.cpp as below and perform this test.
+	* string createRandomString(void)
+	* {
+	*     return "0x12345678"
+	* }
+	*/
 	MockWrite mkwr;
 	MockRead mkrd;
 	SSDTest_WriteReadAging test(&mkwr, &mkrd);

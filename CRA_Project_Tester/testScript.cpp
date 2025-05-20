@@ -62,23 +62,21 @@ void SSDTest_PartialLBAWrite::run(string param1, string param2)
 
 void SSDTest_WriteReadAging::run(string param1, string param2)
 {
-	string wdata = createRandomString();
-
 	if (mWrite == nullptr)    mWrite = new Write;
 	if (mRead == nullptr)    mRead = new Read;
 
 	for (int loop = 0; loop < 200; loop++) {
 		// s1. write
-		mWrite->run("0", wdata);
-		mWrite->run("99", wdata);
+		string wdata1 = createRandomString();
+		mWrite->run("0", wdata1);
+		string wdata2 = createRandomString();
+		mWrite->run("99", wdata2);
 
 		// s2. ReadCompare 
-		if (mRead->read("0") != mRead->read("99"))
-		{
-			cout << "FAIL\n";
-			throw std::exception();
-		}
+		CompareData(wdata1, mRead->read("0"));
+		CompareData(wdata2, mRead->read("99"));
 	}
+
 	cout << "PASS\n";
 }
 
