@@ -73,12 +73,10 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 		mWrite->run("99", wdata);
 
 		// s2. ReadCompare 
-		if (mRead->read("0") != mRead->read("99"))
-		{
-			cout << "FAIL\n";
-			throw std::exception();
-		}
+		CompareData(wdata, mRead->read("0"));
+		CompareData(wdata, mRead->read("99"));
 	}
+
 	cout << "PASS\n";
 }
 
