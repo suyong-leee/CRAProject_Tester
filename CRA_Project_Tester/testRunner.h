@@ -1,7 +1,7 @@
 #pragma once
 #include "testScript.h"
 #include "testShell.h"
-
+#include "Logger.h"
 class TestRun
 {
 public:
@@ -46,7 +46,7 @@ public:
 
 		if (operationOrder == -1)
 		{
-			cout << "INVALID COMMAND" << endl;
+			LOG("INVALID COMMAND\n");
 			return true;
 		}
 
@@ -74,6 +74,7 @@ public:
 	{
 		return operators[operation];
 	}
+	Logger loggerInstance;
 private:
 	ITestOperation* currentOperation = nullptr;
 	ITestOperation* operators[NUM_OF_OPERATOR] = { nullptr, };

@@ -1,12 +1,13 @@
 #include "gmock/gmock.h"
 #include <iostream>
-
+#include "Logger.h"
 #include "testRunner.h"
 
 #define __DEBUG__ (1)
 
 using namespace std;
 using namespace testing;
+Logger loggerInstance;
 
 #if (__DEBUG__ == 1)
 int main()

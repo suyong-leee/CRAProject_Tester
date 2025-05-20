@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <cstdio>
+#include "Logger.h"
 using namespace std;
 class ITestOperation
 {
@@ -71,12 +72,12 @@ public:
 				}
 
 				if (address.size() == 1) address = "0" + address;
-				cout << "[Read] LBA " << address << " : " << result << endl;
+				LOG("[Read] LBA  "+address+" : "+result+"\n");
 			}
 		}
 		catch (invalid_argument& e)
 		{
-			cout << "error message : " << e.what() << endl;
+			LOG("error message : %s\n", e.what());
 		}
 	return result;
     }
@@ -97,21 +98,25 @@ public:
     }
 
 };
+
 class Help : public ITestOperation
 {
 public:
 	void run(string command1 = "", string command2 = "") override
 	{
-		cout << "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민" << endl;
-		cout << "How to use CMD" << endl;
-		cout << "read (address) : (address)의 데이터를 읽음" << endl;
-		cout << "write (address) (data) : (address)에 (data)를 씀" << endl;
-		cout << "fullread : 모든 데이터를 읽음" << endl;
-		cout << "fullwrite (data) : 모든 주소에 (data)를 씀" << endl;
-		cout << "exit : 종료" << endl;
-		cout << "help : 도움말" << endl;
+		std::string help =
+			"Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민\n"
+			"How to use CMD\n"
+			"read (address) : (address)의 데이터를 읽음\n"
+			"write (address) (data) : (address)에 (data)를 씀\n"
+			"fullread : 모든 데이터를 읽음\n"
+			"fullwrite (data) : 모든 주소에 (data)를 씀\n"
+			"exit : 종료\n"
+			"help : 도움말\n";
+		LOG(help);
 	}
 };
+
 class Write : public ITestOperation
 {
 public:
@@ -129,7 +134,7 @@ public:
 		}
 		catch (invalid_argument& e)
 		{
-			cout << "error message : " << e.what() << endl;
+			LOG("error message : %s", e.what());
 		}
 		return;
 	}

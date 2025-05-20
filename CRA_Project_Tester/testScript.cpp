@@ -1,5 +1,6 @@
 ﻿#include "testShell.h"
 #include "Util.h"
+#include "Logger.h"
 #include "testScript.h"
 #include <stdexcept>
 
@@ -29,7 +30,6 @@ void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 			if (CompareData(buffer, readBuffer)) continue;
 		}
 	}
-	cout << "PASS\n";
 
 }
 
@@ -58,12 +58,10 @@ void SSDTest_PartialLBAWrite::run(string param1, string param2)
 
         for (int i = 0; i < 4; i++) {
             if (rdata[i] != rdata[i + 1]) {
-				cout << "FAIL\n";
                 throw std::exception();
             }
         }
     }
-	cout << "PASS\n";
 }
 
 void SSDTest_WriteReadAging::run(string param1, string param2)
@@ -81,11 +79,9 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 		// s2. ReadCompare 
 		if (mRead->read("0") != mRead->read("99"))
 		{
-			cout << "FAIL\n";
 			throw std::exception();
 		}
 	}
-	cout << "PASS\n";
 }
 
 void SSDTest_EraseAndWriteAging::run(string param1, string param2)
@@ -103,7 +99,6 @@ void SSDTest_EraseAndWriteAging::run(string param1, string param2)
 		WriteAndErase(4);
 		WriteAndErase(6);
 	}
-	cout << "PASS\n";
 }
 
 void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
@@ -121,7 +116,6 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 	// s2. ReadCompare 
 	if (rdata != ov_rdata)
 	{
-		cout << "FAIL\n";
 		throw std::exception();
 	}
 	// s3. erase
@@ -133,7 +127,7 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 void SSDTest_FullScenario::run(string file_name, string param2)
 {
 	FILE* f;
-
+	loggerInstance.setLogType(1);
 	fopen_s(&f, file_name.c_str(), "r");
 	if (!f) throw std::exception();
 
@@ -155,18 +149,17 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 
 		try
 		{
-			cout << "Run... ";
+			LOG("Run... ");
 			scenario->run("", "");
-			cout << "Pass" << endl;
+			LOG("Pass\n");
 			delete scenario;
 		}
 		catch (exception& e)
 		{
-			cout << "FAIL!" << endl;
+			LOG("FAIL!\n");
 			fclose(f);
 			throw std::exception();
 		}
 	}
-
 	fclose(f);
 }
