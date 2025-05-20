@@ -26,6 +26,7 @@ public:
 		SCENARIO_1,
 		SCENARIO_2,
 		SCENARIO_3,
+		SCENARIO_4,
 		NUM_OF_OPERATOR,
 		PARAM_ZERO = NUM_OF_OPERATOR,
 	};
@@ -44,6 +45,7 @@ public:
 		operators[OPERATOR_ERASE] = new Erase;
 		operators[OPERATOR_ERASE_RANGE] = new EraseRange;
 
+		operators[SCENARIO_4] = new SSDTest_EraseAndWriteAging;
 		operators[FULL_SCENARIO] = new SSDTest_FullScenario;
 	}
 	bool RunCommand()
@@ -101,6 +103,7 @@ private:
 		else if (command == "erase") return OPERATOR_ERASE;
 		else if (command == "erase_range") return OPERATOR_ERASE_RANGE;
 
+		else if (command == "4_" || command == "4_EraseAndWriteAging") return SCENARIO_4;
 		else if (command.find(".txt") != string::npos) return FULL_SCENARIO;
 
 		else return -1;
