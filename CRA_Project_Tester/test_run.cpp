@@ -1,6 +1,7 @@
 #include "gmock/gmock.h"
 #include <string>
 #include "testScript.h"
+#include"Logger.h"
 using namespace std;
 using namespace testing;
 
@@ -71,4 +72,41 @@ TEST_F(SSDTestFixture, FullWriteAndReadCompareTest) {
             });
 
     ssd->run("", "");
+}
+
+class LoggerTest : public ::testing::Test {
+protected:
+    std::string logFilename = "test_log.txt";
+
+    void SetUp() override {
+        std::remove(logFilename.c_str());
+    }
+
+    void TearDown() override {
+        std::remove(logFilename.c_str());
+    }
+};
+
+TEST_F(LoggerTest, LogMessageIsWrittenToFile) {
+    Logger logger(logFilename);
+
+    std::string testMessage = "This is a test log entry.";
+    logger.print(1,"LoggerTestFunc", testMessage);
+
+    std::ifstream infile(logFilename);
+    ASSERT_TRUE(infile.is_open()) << "Log file could not be opened.";
+
+    std::string line;
+    bool found = false;
+
+    while (std::getline(infile, line)) {
+        if (line.find(testMessage) != std::string::npos &&
+            line.find("LoggerTestFunc( )") != std::string::npos) {
+            found = true;
+            break;
+        }
+    }
+
+    infile.close();
+    ASSERT_TRUE(found) << "Log message not found in log file.";
 }
