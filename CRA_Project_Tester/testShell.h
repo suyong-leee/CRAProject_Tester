@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include <iostream>
+#include <fstream>
 #include <string>
+#include <cstdio>
 using namespace std;
 class ITestOperation
 {
@@ -54,13 +56,20 @@ public:
 				if (!pipe) {
 					return "error: cannot open pipe";
 				}
-
-				char buffer[128];
-				while (fgets(buffer, sizeof(buffer), pipe) != nullptr) {
-					result += buffer;
-				}
-
+				
 				_pclose(pipe);
+
+				ifstream file("ssd_output.txt");
+				if (file.is_open()) {
+					string line;
+					while (getline(file, line)) {
+						result += line ;  // 여러 줄 출력 가능성 고려
+					}
+					file.close();
+				}
+				else {
+					result = "error: cannot open output file";
+				}
 
 				if (address.size() == 1) address = "0" + address;
 				cout << "[Read] LBA " << address << " : " << result << endl;
@@ -70,7 +79,7 @@ public:
 		{
 			cout << "error message : " << e.what() << endl;
 		}
-	return "error";
+	return result;
     }
 
 };
@@ -82,11 +91,10 @@ public:
     {
         for (int i = 0; i < 100; i++)
         {
-	    string lba = to_string(i);
-	    string result = read(lba);
-            if (lba.size() == 1) lba = "0" + lba;	
-		cout << "[Read] LBA " << lba << " : " << result << endl;
-	}
+	        string lba = to_string(i);
+	        read(lba);
+ 
+		}
     }
 
 };
