@@ -66,32 +66,30 @@ public:
 	{
 		try
 		{
-			if (checkLBA(command1))
+		    if (checkLBA(command1))
+		    {
+		        string command;
+		        int lba = stoi(command1), size = stoi(command2);
+			
+    	  	        changeLBAandSIZE(lba, size);
+			    
+		    	int cycle = size / 10;
+			int cycleSize = 10;
+			int remainSize = size;
+
+			for (int i = 0; i <= cycle; i++)
 			{
-				string command;
-				int lba = stoi(command1), size = stoi(command2);
-				
-			    changeLBAandSIZE(lba, size);
-				
-
-				int cycle = size / 10;
-				int cycleSize = 10;
-				int remainSize = size;
-
-				for (int i = 0; i <= cycle; i++)
-				{
-					command = "ssd.exe E ";
-					if (remainSize < 10) cycleSize = remainSize;
-					command = command + to_string(lba) + " " + to_string(cycleSize);
-					eraseSSD(command);
-					remainSize -= 10;
-					lba += 10;
-				}
+			    command = "ssd.exe E ";
+			    if (remainSize < 10) cycleSize = remainSize;
+			    command = command + to_string(lba) + " " + to_string(cycleSize);
+			    eraseSSD(command);
+			    remainSize -= 10;
 			}
+		    }
 		}
 		catch (invalid_argument& e)
 		{
-			cout << "error message : " << e.what() << endl;
+	  	    cout << "error message : " << e.what() << endl;
 		}
 	}
 	void run(string command1 = "", string command2 = "") override
