@@ -116,3 +116,39 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 	mErase->run(to_string(start_addr + 1));
 	mErase->run(to_string(start_addr + 2));
 }
+
+void SSDTest_FullScenario::run(string file_name, string param2)
+{
+	FILE* f;
+
+	fopen_s(&f, file_name.c_str(), "r");
+	if (!f) throw std::exception();
+
+	char word[128];
+	while (fgets(word, sizeof(word), f) != nullptr)
+	{
+		string tsname(word);
+		ITestOperation* scenario = nullptr;
+
+		if (tsname.find("1_") != string::npos) scenario = new SSDTest_FullWriteAndReadCompare(new Write, new Read);
+		else if (tsname.find("2_") != string::npos) scenario = new SSDTest_PartialLBAWrite(new Write, new Read);
+		else if (tsname.find("3_") != string::npos) scenario = new SSDTest_WriteReadAging(new Write, new Read);
+		else if (tsname.find("4_") != string::npos) scenario = new SSDTest_EraseAndWriteAging(new Write, new Read, new Erase);
+		else throw std::exception();
+
+		try
+		{
+			cout << "Run... ";
+			scenario->run("", "");
+			cout << "Pass" << endl;
+			delete scenario;
+		}
+		catch (exception& e)
+		{
+			cout << "FAIL!" << endl;
+			throw std::exception();
+		}
+	}
+
+	fclose(f);
+}
