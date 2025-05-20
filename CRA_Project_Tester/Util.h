@@ -3,7 +3,9 @@
 #ifdef UTIL_H
 #include <string>
 #include <sstream>
+#include<iostream>
+#include <iomanip> 
 using namespace std;
-string createRadomString(void);
+string createRandomString(void);
 bool CompareData(string  writeBuffer, string readBuffer);
 #endif

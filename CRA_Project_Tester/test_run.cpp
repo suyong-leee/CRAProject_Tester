@@ -9,12 +9,26 @@ class MockWriteDriver_ : public Write {
 public:
     MOCK_METHOD(void, run, (std::string, std::string), (override));
     MOCK_METHOD(void, write, (std::string address, std::string data), ());
+    std::map<std::string, std::string> writtenData;
+
+    void writeData(const std::string& address, const std::string& data) {
+        writtenData[address] = data;
+    }
 };
 
 class MockReadDriver_ : public Read {
 public:
     MOCK_METHOD(void, run, (std::string, std::string), (override));
     MOCK_METHOD(string, read, (std::string address), ());
+    MockWriteDriver_* mockWriteDriver;
+
+    std::string readData(const std::string& address) {
+        auto it = mockWriteDriver->writtenData.find(address);
+        if (it != mockWriteDriver->writtenData.end()) {
+            return it->second; 
+        }
+        return ""; 
+    }
 };
 
 class SSDTestFixture : public ::testing::Test {
@@ -42,10 +56,19 @@ TEST_F(SSDTestFixture, FullWriteAndReadCompareFailTest) {
 }
 
 TEST_F(SSDTestFixture, FullWriteAndReadCompareTest) {
-    EXPECT_CALL(mockWrite, run(_, "0x11111111")).Times(::testing::AnyNumber());
+
+    EXPECT_CALL(mockWrite, run(_, _))
+        .Times(::testing::AnyNumber())
+        .WillRepeatedly([this](std::string address, std::string data) {
+        mockWrite.writtenData[address] = data;
+            });
+
+
     EXPECT_CALL(mockRead, read(_))
         .Times(::testing::AnyNumber())
-        .WillRepeatedly(Return("0x11111111"));
+        .WillRepeatedly([this](std::string address) {
+        return mockWrite.writtenData[address]; 
+            });
 
     ssd->run("", "");
 }
