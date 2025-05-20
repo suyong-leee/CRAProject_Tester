@@ -34,14 +34,14 @@ public:
 	
 	void eraseSSD(string command)
 	{
-		/*
+		
 		FILE* pipe = _popen(command.c_str(), "r");
 		if (!pipe) {
 			cout << "erase cmd error: " << command << endl;
 		}
 		_pclose(pipe);
-		*/
-		cout << "Erase command is " << command << endl;
+		
+		//cout << "Erase command is " << command << endl;
 	}
 	void changeLBAandSIZE(int& lba, int& size)
 	{
