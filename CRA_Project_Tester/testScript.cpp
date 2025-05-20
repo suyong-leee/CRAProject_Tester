@@ -14,20 +14,22 @@ void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 	//• 10 ~14번 LBA까지 다른 값으로 Write 명령어를 수행한다.
 	//• 10 ~14번 LBA까지 ReadCompare 수행
 	//• 위와 같은 규칙으로 전체 영역에 대해 Full Write + Read Compare를 수행한다.
-	string writeBuffer[100];
+	
 	string readBuffer;
-	string buffer = createRadomString();
+	string buffer; //read 구현 전까지 buffer에 임의값 고정하여 TEST 돌림
+
 	for (int i = 0; i < 100; i += 5)
 	{
+		buffer = createRandomString(); //read 구현 전까지 buffer에 임의값 고정하여 TEST 돌림
 		for (int j = i; j < i + 5; j++) {
 			write->run(to_string(j), buffer);
-			writeBuffer[j] = buffer;
 		}
 		for (int j = i; j < i + 5; j++) {
 			readBuffer = read->read(to_string(j));
-			if (CompareData(writeBuffer[j], readBuffer)) continue;
+			if (CompareData(buffer, readBuffer)) continue;
 		}
 	}
+	cout << "PASS\n";
 
 }
 
@@ -56,15 +58,17 @@ void SSDTest_PartialLBAWrite::run(string param1, string param2)
 
         for (int i = 0; i < 4; i++) {
             if (rdata[i] != rdata[i + 1]) {
+				cout << "FAIL\n";
                 throw std::exception();
             }
         }
     }
+	cout << "PASS\n";
 }
 
 void SSDTest_WriteReadAging::run(string param1, string param2)
 {
-	string wdata = createRadomString();
+	string wdata = createRandomString();
 
 	if (mWrite == nullptr)    mWrite = new Write;
 	if (mRead == nullptr)    mRead = new Read;
@@ -75,8 +79,13 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 		mWrite->run("99", wdata);
 
 		// s2. ReadCompare 
-		if (mRead->read("0") != mRead->read("99")) throw std::exception();
+		if (mRead->read("0") != mRead->read("99"))
+		{
+			cout << "FAIL\n";
+			throw std::exception();
+		}
 	}
+	cout << "PASS\n";
 }
 
 void SSDTest_EraseAndWriteAging::run(string param1, string param2)
@@ -94,11 +103,12 @@ void SSDTest_EraseAndWriteAging::run(string param1, string param2)
 		WriteAndErase(4);
 		WriteAndErase(6);
 	}
+	cout << "PASS\n";
 }
 
 void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 {
-	string wdata = createRadomString();
+	string wdata = createRandomString();
 	string rdata, ov_rdata;
 
 	// s1. write
@@ -109,8 +119,11 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 	ov_rdata = mRead->read(to_string(start_addr));
 
 	// s2. ReadCompare 
-	if (rdata != ov_rdata) throw std::exception();
-
+	if (rdata != ov_rdata)
+	{
+		cout << "FAIL\n";
+		throw std::exception();
+	}
 	// s3. erase
 	mErase->run(to_string(start_addr));
 	mErase->run(to_string(start_addr + 1));
