@@ -152,8 +152,10 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		{
 			LOG("FAIL!\n");
 			fclose(f);
+			loggerInstance.setLogType(0);
 			throw std::exception();
 		}
 	}
 	fclose(f);
+	loggerInstance.setLogType(0);
 }
