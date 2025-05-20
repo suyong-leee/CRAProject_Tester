@@ -9,24 +9,62 @@ public:
 
 };
 
+class Erase : public ITestOperation
+{
+public:
+	bool checkLBA(string LBA)
+	{
+		if (LBA.size() > 2)
+		{
+			throw invalid_argument("세 자리 이상 불가.");
+		}
+		if (LBA.size() == 0)
+		{
+			throw invalid_argument("한 자리 이상 입력 필수");
+		}
+		for (int i = 0; i < LBA.size(); i++)
+		{
+			if (LBA[i] >= '0' && LBA[i] <= '9') continue;
+			else throw invalid_argument("0 ~ 9 사이 수만 가능");
+		}
+		return true;
+	}
+	void run(string command1 = "", string command2 = "") override
+	{
+		try
+		{
+			if (checkLBA(command1))
+			{
+				string command = "ssd.exe E " + command1 + " "+ command2;
+				cout << "erase command is " << command << endl;
+			}
+		}
+		catch (invalid_argument& e)
+		{
+			cout << "error message : " << e.what() << endl;
+		}
+		return;
+	}
+
+};
 //example
 class Read : public ITestOperation
 {
 public:
-    bool checkCMD(string command)
+    bool checkLBA(string LBA)
     {
 
-	    if (command.size() > 2)
+	    if (LBA.size() > 2)
 	    {
 		    throw invalid_argument("세 자리 이상 불가.");
 	    }
-	    if (command.size() == 0)
+	    if (LBA.size() == 0)
 	    {
 		    throw invalid_argument("한 자리 이상 입력 필수");
 	    }
-	    for (int i = 0; i < command.size(); i++)
+	    for (int i = 0; i < LBA.size(); i++)
 	    {
-		    if (command[i] >= '0' && command[i] <= '9') continue;
+		    if (LBA[i] >= '0' && LBA[i] <= '9') continue;
 		    else throw invalid_argument("0 ~ 9 사이 수만 가능");
 	    }
 	    return true;
@@ -45,7 +83,7 @@ public:
 
 		try
 		{
-			if (checkCMD(address))
+			if (checkLBA(address))
 			{
 				string command = "ssd.exe R " + address;
 				string result;
@@ -70,7 +108,7 @@ public:
 		{
 			cout << "error message : " << e.what() << endl;
 		}
-	return "error";
+	return result;
     }
 
 };
