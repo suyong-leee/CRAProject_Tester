@@ -90,7 +90,7 @@ private:
 		else if (command == "1_" || command == "1_FullWriteAndReadCompare") return SCENARIO_1;
 		else if (command == "2_" || command == "2_PartialLBAWrite") return SCENARIO_2;
 		else if (command == "3_" || command == "3_WriteReadAging") return SCENARIO_3;
-		else if (command.find(".txt")) return FULL_SCENARIO;
+		else if (command.find(".txt") != string::npos) return FULL_SCENARIO;
 		else return -1;
 	}
 

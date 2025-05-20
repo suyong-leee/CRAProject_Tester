@@ -147,7 +147,11 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		else if (tsname.find("2_") != string::npos) scenario = new SSDTest_PartialLBAWrite(new Write, new Read);
 		else if (tsname.find("3_") != string::npos) scenario = new SSDTest_WriteReadAging(new Write, new Read);
 		else if (tsname.find("4_") != string::npos) scenario = new SSDTest_EraseAndWriteAging(new Write, new Read, new Erase);
-		else throw std::exception();
+		else
+		{
+			fclose(f);
+			throw std::exception();
+		}
 
 		try
 		{
@@ -159,6 +163,7 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		catch (exception& e)
 		{
 			cout << "FAIL!" << endl;
+			fclose(f);
 			throw std::exception();
 		}
 	}
