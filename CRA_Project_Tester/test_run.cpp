@@ -1,6 +1,7 @@
 #include "gmock/gmock.h"
 #include <string>
 #include "testScript.h"
+#include"Logger.h"
 using namespace std;
 using namespace testing;
 
@@ -71,4 +72,9 @@ TEST_F(SSDTestFixture, FullWriteAndReadCompareTest) {
             });
 
     ssd->run("", "");
+}
+
+TEST(LoggerTest, datacheck) {
+    Logger loggerInstance;
+    EXPECT_EQ(1, 0);
 }
