@@ -78,4 +78,8 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 		if (mRead->read("0") != mRead->read("99")) throw std::exception();
 	}
 }
- 
+
+void SSDTest_EraseAndWriteAging::run(string param1, string param2)
+{
+
+}

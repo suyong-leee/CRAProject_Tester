@@ -34,3 +34,16 @@ private:
 	Write* mWrite;
 	Read* mRead;
 };
+
+class SSDTest_EraseAndWriteAging :public ITestOperation, public exception
+{
+public:
+	SSDTest_EraseAndWriteAging(Write* w, Read* r, Erase* e) : mWrite(w), mRead(r), mErase(e) {};
+	SSDTest_EraseAndWriteAging() : mWrite(nullptr), mRead(nullptr), mErase(nullptr) {};
+	void run(string param1, string param2) override;
+
+private:
+	Write* mWrite;
+	Read* mRead;
+	Erase* mErase;
+};
