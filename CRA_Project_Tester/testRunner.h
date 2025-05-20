@@ -9,12 +9,15 @@ public:
 	{
 
 		OPERATOR_WRITE = 0,
-		PARAM_TWO = OPERATOR_WRITE,
+		OPERATOR_ERASE,
+		OPERATOR_ERASE_RANGE,
+		PARAM_TWO = OPERATOR_ERASE_RANGE,
 
 		OPERATOR_FULLWRITE,
 		OPERATOR_READ,
 		FULL_SCENARIO,
 		PARAM_ONE = OPERATOR_READ,
+
 		OPERATOR_FULLREAD,
 
 		OPERATOR_EXIT,
@@ -24,6 +27,7 @@ public:
 		SCENARIO_1,
 		SCENARIO_2,
 		SCENARIO_3,
+		SCENARIO_4,
 		NUM_OF_OPERATOR,
 		PARAM_ZERO = NUM_OF_OPERATOR,
 	};
@@ -38,6 +42,11 @@ public:
 		operators[SCENARIO_1] = new SSDTest_FullWriteAndReadCompare(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
 		operators[SCENARIO_2] = new SSDTest_PartialLBAWrite(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
 		operators[SCENARIO_3] = new SSDTest_WriteReadAging(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
+	
+		operators[OPERATOR_ERASE] = new Erase;
+		operators[OPERATOR_ERASE_RANGE] = new EraseRange;
+
+		operators[SCENARIO_4] = new SSDTest_EraseAndWriteAging;
 		operators[FULL_SCENARIO] = new SSDTest_FullScenario;
 
 		operators[OPERATOR_FLUSH] = new Flush;
@@ -93,8 +102,15 @@ private:
 		else if (command == "1_" || command == "1_FullWriteAndReadCompare") return SCENARIO_1;
 		else if (command == "2_" || command == "2_PartialLBAWrite") return SCENARIO_2;
 		else if (command == "3_" || command == "3_WriteReadAging") return SCENARIO_3;
+	
 		else if (command == "flush") return OPERATOR_FLUSH;
+		else if (command == "erase") return OPERATOR_ERASE;
+		else if (command == "erase_range") return OPERATOR_ERASE_RANGE;
+
+		else if (command == "4_" || command == "4_EraseAndWriteAging") return SCENARIO_4;
+
 		else if (command.find(".txt") != string::npos) return FULL_SCENARIO;
+
 		else return -1;
 	}
 

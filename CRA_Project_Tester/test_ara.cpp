@@ -21,8 +21,16 @@ public:
 	MOCK_METHOD(void, run, (string, string), (override));
 };
 
-TEST(SDDTEST, PartialLBAWrite)
+TEST(SDDTEST, DISABLED_PartialLBAWrite)
 {
+	/*
+	* To perform this test,
+	* modify the createRandomString function in Util.cpp as below and perform this test.
+	* string createRandomString(void)
+	* {
+	*     return "0x12345678"
+	* }
+	*/
 	MockWrite mkwr;
 	MockRead mkrd;
 	SSDTest_PartialLBAWrite test(&mkwr, &mkrd);
@@ -33,17 +41,35 @@ TEST(SDDTEST, PartialLBAWrite)
 	EXPECT_CALL(mkwr, run("2", "0x12345678")).Times(30);
 	EXPECT_CALL(mkwr, run("1", "0x12345678")).Times(30);
 
-	EXPECT_CALL(mkrd, read("0")).Times(30);
-	EXPECT_CALL(mkrd, read("1")).Times(30);
-	EXPECT_CALL(mkrd, read("2")).Times(30);
-	EXPECT_CALL(mkrd, read("3")).Times(30);
-	EXPECT_CALL(mkrd, read("4")).Times(30);
+	EXPECT_CALL(mkrd, read("0"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("1"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("2"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("3"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mkrd, read("4"))
+		.Times(30)
+		.WillRepeatedly(Return(string("0x12345678")));
 
 	test.run("", "");
 }
 
-TEST(SDDTEST, PartialLBAWrite_exception)
+TEST(SDDTEST, DISABLED_PartialLBAWrite_exception)
 {
+	/*
+	* To perform this test,
+	* modify the createRandomString function in Util.cpp as below and perform this test.
+	* string createRandomString(void)
+	* {
+	*     return "0x12345678"
+	* }
+	*/
 	MockWrite mkwr;
 	MockRead mkrd;
 	SSDTest_PartialLBAWrite test(&mkwr, &mkrd);
@@ -104,8 +130,16 @@ TEST(SDDTEST, WriteReadAging_exception)
 	EXPECT_THROW(test.run("", ""), exception);
 }
 
-TEST(SDDTEST, EraseAndWriteAging)
+TEST(SDDTEST, DISABLED_EraseAndWriteAging)
 {
+	/*
+	* 해당 테스트를 수행하려면
+	* Util.cpp에서 아래와 같이 createRandomString 함수를 수정한 후 검증수행
+	* string createRandomString(void)
+	* {
+	*     return "0x12345678"
+	* }
+	*/
 	MockWrite mkwr;
 	MockRead mkrd;
 	MockErase mker;

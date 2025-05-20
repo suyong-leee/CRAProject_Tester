@@ -35,13 +35,14 @@ void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 
 void SSDTest_PartialLBAWrite::run(string param1, string param2)
 {
-    string wdata = "0x12345678";
+    string wdata = createRandomString();
     string rdata[5];
 
     if (mWrite == nullptr)    mWrite = new Write;
     if (mRead == nullptr)    mRead = new Read;
 
-    for (int loop = 0; loop < 30; loop++) {
+    for (int loop = 0; loop < 30; loop++)
+	{
         // s1. write
         mWrite->run("4", wdata);
         mWrite->run("0", wdata);
@@ -50,18 +51,11 @@ void SSDTest_PartialLBAWrite::run(string param1, string param2)
         mWrite->run("2", wdata);
 
         // s2. ReadCompare
-        rdata[0] = mRead->read("0");
-        rdata[1] = mRead->read("1");
-        rdata[2] = mRead->read("2");
-        rdata[3] = mRead->read("3");
-        rdata[4] = mRead->read("4");
-
-        for (int i = 0; i < 4; i++) {
-            if (rdata[i] != rdata[i + 1]) {
-				cout << "FAIL\n";
-                throw std::exception();
-            }
-        }
+		CompareData(wdata, mRead->read("0"));
+		CompareData(wdata, mRead->read("1"));
+		CompareData(wdata, mRead->read("2"));
+		CompareData(wdata, mRead->read("3"));
+		CompareData(wdata, mRead->read("4"));
     }
 	cout << "PASS\n";
 }
@@ -108,22 +102,21 @@ void SSDTest_EraseAndWriteAging::run(string param1, string param2)
 
 void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 {
-	string wdata = createRandomString();
-	string rdata, ov_rdata;
+	string wdata;
+	string rdata;
 
-	// s1. write
+	// s1. write & ReadCompare
+	wdata = createRandomString();
 	mWrite->run(to_string(start_addr), wdata);
 	rdata = mRead->read(to_string(start_addr));
+	CompareData(wdata, rdata);
 
+	// s2. rewrite & ReadCompare
+	wdata = createRandomString();
 	mWrite->run(to_string(start_addr), wdata);
-	ov_rdata = mRead->read(to_string(start_addr));
+	rdata = mRead->read(to_string(start_addr));
+	CompareData(wdata, rdata);
 
-	// s2. ReadCompare 
-	if (rdata != ov_rdata)
-	{
-		cout << "FAIL\n";
-		throw std::exception();
-	}
 	// s3. erase
 	mErase->run(to_string(start_addr));
 	mErase->run(to_string(start_addr + 1));
