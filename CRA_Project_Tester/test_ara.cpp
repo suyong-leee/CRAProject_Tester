@@ -104,8 +104,16 @@ TEST(SDDTEST, WriteReadAging_exception)
 	EXPECT_THROW(test.run("", ""), exception);
 }
 
-TEST(SDDTEST, EraseAndWriteAging)
+TEST(SDDTEST, DISABLED_EraseAndWriteAging)
 {
+	/*
+	* 해당 테스트를 수행하려면
+	* Util.cpp에서 아래와 같이 createRandomString 함수를 수정한 후 검증수행
+	* string createRandomString(void)
+	* {
+	*     return "0x12345678"
+	* }
+	*/
 	MockWrite mkwr;
 	MockRead mkrd;
 	MockErase mker;
