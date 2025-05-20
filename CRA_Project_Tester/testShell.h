@@ -59,7 +59,7 @@ public:
 				
 				_pclose(pipe);
 
-				ifstream file("output.txt");
+				ifstream file("ssd_output.txt");
 				if (file.is_open()) {
 					string line;
 					while (getline(file, line)) {
