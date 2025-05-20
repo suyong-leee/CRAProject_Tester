@@ -32,7 +32,7 @@ public:
 		return true;
 	}
 	
-	void erase(string command)
+	void eraseSSD(string command)
 	{
 		/*
 		FILE* pipe = _popen(command.c_str(), "r");
@@ -54,7 +54,7 @@ public:
 			size = end + 1;
 		}
 	}
-	void run(string command1 = "", string command2 = "") override
+	void erase(string command1, string command2)
 	{
 		try
 		{
@@ -62,7 +62,7 @@ public:
 			{
 				string command;
 				int lba = stoi(command1), size = stoi(command2);
-				if(size < 0)
+				if (size < 0)
 				{
 					changeLBAandSIZE(lba, size);
 				}
@@ -76,7 +76,7 @@ public:
 					command = "ssd.exe E ";
 					if (remainSize < 10) cycleSize = remainSize;
 					command = command + to_string(lba) + " " + to_string(cycleSize);
-					erase(command);
+					eraseSSD(command);
 					remainSize -= 10;
 					lba += 10;
 				}
@@ -86,6 +86,10 @@ public:
 		{
 			cout << "error message : " << e.what() << endl;
 		}
+	}
+	void run(string command1 = "", string command2 = "") override
+	{
+		erase(command1, command2);
 		return;
 	}
 
@@ -100,12 +104,10 @@ public:
 			if (checkLBA(command1) && checkLBA(command2))
 			{
 				int start = stoi(command1), end = stoi(command2);
-				string command = "ssd.exe E ";
-				
-				if (start > end) command = command + command2 + " " + to_string(start - end + 1);
-				else command = command + command1 + " " + to_string(end - start + 1);
-				
-				erase(command);
+				int size = abs(start - end) + 1;
+				if (start > end) erase(command2, to_string(size));
+				else erase(command1, to_string(size));
+			
 				//cout << "erase_Range command is " << command << endl;
 			}
 		}
