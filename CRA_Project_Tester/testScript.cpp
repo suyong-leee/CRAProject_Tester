@@ -108,22 +108,21 @@ void SSDTest_EraseAndWriteAging::run(string param1, string param2)
 
 void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 {
-	string wdata = createRandomString();
-	string rdata, ov_rdata;
+	string wdata;
+	string rdata;
 
-	// s1. write
+	// s1. write & ReadCompare
+	wdata = createRandomString();
 	mWrite->run(to_string(start_addr), wdata);
 	rdata = mRead->read(to_string(start_addr));
+	CompareData(wdata, rdata);
 
+	// s2. rewrite & ReadCompare
+	wdata = createRandomString();
 	mWrite->run(to_string(start_addr), wdata);
-	ov_rdata = mRead->read(to_string(start_addr));
+	rdata = mRead->read(to_string(start_addr));
+	CompareData(wdata, rdata);
 
-	// s2. ReadCompare 
-	if (rdata != ov_rdata)
-	{
-		cout << "FAIL\n";
-		throw std::exception();
-	}
 	// s3. erase
 	mErase->run(to_string(start_addr));
 	mErase->run(to_string(start_addr + 1));
