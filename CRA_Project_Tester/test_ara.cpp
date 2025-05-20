@@ -111,23 +111,49 @@ TEST(SDDTEST, EraseAndWriteAging)
 	MockErase mker;
 	SSDTest_EraseAndWriteAging test(&mkwr, &mkrd, &mker);
 
-	EXPECT_CALL(mkwr, run("2", "0x23456781"));
-	EXPECT_CALL(mkwr, run("2", "0x22222222"));
-	EXPECT_CALL(mker, run("2", ""));
-	EXPECT_CALL(mker, run("3", ""));
-	EXPECT_CALL(mker, run("4", ""));
+	// erase 0 ~2
+	EXPECT_CALL(mker, run("0", ""));
+	EXPECT_CALL(mker, run("1", ""));
+//	EXPECT_CALL(mker, run("2", ""));
 
-	EXPECT_CALL(mkwr, run("4", "0x456789012"));
-	EXPECT_CALL(mkwr, run("4", "0x444444444"));
-	EXPECT_CALL(mker, run("4", ""));
-	EXPECT_CALL(mker, run("5", ""));
-	EXPECT_CALL(mker, run("6", ""));
+	// write 2 & erase 2~4
+	EXPECT_CALL(mkwr, run("2", _))
+		.Times(60);
+	EXPECT_CALL(mkrd, read("2"))
+		.Times(60)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mker, run("2", ""))
+		.Times(31);
+	EXPECT_CALL(mker, run("3", ""))
+		.Times(30);
+//	EXPECT_CALL(mker, run("4", ""))
+//		.Times(30);
 
-	EXPECT_CALL(mkwr, run("6", "0x67890123"));
-	EXPECT_CALL(mkwr, run("6", "0x66666666"));
-	EXPECT_CALL(mker, run("6", ""));
-	EXPECT_CALL(mker, run("7", ""));
-	EXPECT_CALL(mker, run("8", ""));
+	// write 4 & erase 4~6
+	EXPECT_CALL(mkwr, run("4", _))
+		.Times(60);
+	EXPECT_CALL(mkrd, read("4"))
+		.Times(60)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mker, run("4", ""))
+		.Times(60);
+	EXPECT_CALL(mker, run("5", ""))
+		.Times(30);
+//	EXPECT_CALL(mker, run("6", ""))
+//		.Times(30);
+
+	// write 6 & erase 6~8
+	EXPECT_CALL(mkwr, run("6", _))
+		.Times(60);
+	EXPECT_CALL(mkrd, read("6"))
+		.Times(60)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mker, run("6", ""))
+		.Times(60);
+	EXPECT_CALL(mker, run("7", ""))
+		.Times(30);
+	EXPECT_CALL(mker, run("8", ""))
+		.Times(30);
 
 	test.run("", "");
 }

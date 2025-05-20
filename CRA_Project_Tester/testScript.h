@@ -46,4 +46,6 @@ private:
 	Write* mWrite;
 	Read* mRead;
 	Erase* mErase;
+
+	void WriteAndErase(int start_addr);
 };
