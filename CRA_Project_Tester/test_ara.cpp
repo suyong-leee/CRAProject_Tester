@@ -16,6 +16,10 @@ public:
 	MOCK_METHOD(void, run, (string, string), (override));
 };
 
+class MockErase : public Erase {
+public:
+	MOCK_METHOD(void, run, (string, string), (override));
+};
 
 TEST(SDDTEST, PartialLBAWrite)
 {
@@ -98,4 +102,58 @@ TEST(SDDTEST, WriteReadAging_exception)
 		.WillRepeatedly(Return(string("0x11111111")));
 
 	EXPECT_THROW(test.run("", ""), exception);
+}
+
+TEST(SDDTEST, EraseAndWriteAging)
+{
+	MockWrite mkwr;
+	MockRead mkrd;
+	MockErase mker;
+	SSDTest_EraseAndWriteAging test(&mkwr, &mkrd, &mker);
+
+	// erase 0 ~2
+	EXPECT_CALL(mker, run("0", ""));
+	EXPECT_CALL(mker, run("1", ""));
+//	EXPECT_CALL(mker, run("2", ""));
+
+	// write 2 & erase 2~4
+	EXPECT_CALL(mkwr, run("2", _))
+		.Times(60);
+	EXPECT_CALL(mkrd, read("2"))
+		.Times(60)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mker, run("2", ""))
+		.Times(31);
+	EXPECT_CALL(mker, run("3", ""))
+		.Times(30);
+//	EXPECT_CALL(mker, run("4", ""))
+//		.Times(30);
+
+	// write 4 & erase 4~6
+	EXPECT_CALL(mkwr, run("4", _))
+		.Times(60);
+	EXPECT_CALL(mkrd, read("4"))
+		.Times(60)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mker, run("4", ""))
+		.Times(60);
+	EXPECT_CALL(mker, run("5", ""))
+		.Times(30);
+//	EXPECT_CALL(mker, run("6", ""))
+//		.Times(30);
+
+	// write 6 & erase 6~8
+	EXPECT_CALL(mkwr, run("6", _))
+		.Times(60);
+	EXPECT_CALL(mkrd, read("6"))
+		.Times(60)
+		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mker, run("6", ""))
+		.Times(60);
+	EXPECT_CALL(mker, run("7", ""))
+		.Times(30);
+	EXPECT_CALL(mker, run("8", ""))
+		.Times(30);
+
+	test.run("", "");
 }

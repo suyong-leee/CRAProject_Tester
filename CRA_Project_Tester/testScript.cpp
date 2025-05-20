@@ -14,9 +14,12 @@ void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 	//• 10 ~14번 LBA까지 다른 값으로 Write 명령어를 수행한다.
 	//• 10 ~14번 LBA까지 ReadCompare 수행
 	//• 위와 같은 규칙으로 전체 영역에 대해 Full Write + Read Compare를 수행한다.
+
 	string writeBuffer[100];
 	string readBuffer;
-	string buffer = createRadomString();
+	//string buffer = createRadomString(); //read 구현 전까지 buffer에 임의값 고정하여 TEST 돌림
+	string buffer = "0x11111111";
+
 	for (int i = 0; i < 100; i += 5)
 	{
 		for (int j = i; j < i + 5; j++) {
@@ -78,4 +81,41 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 		if (mRead->read("0") != mRead->read("99")) throw std::exception();
 	}
 }
- 
+
+void SSDTest_EraseAndWriteAging::run(string param1, string param2)
+{
+	if (mWrite == nullptr)    mWrite = new Write;
+	if (mRead == nullptr)    mRead = new Read;
+	if (mErase == nullptr)    mErase = new Erase;
+
+	mErase->run("0");
+	mErase->run("1");
+	mErase->run("2");
+
+	for (int loop = 0; loop < 30; loop++) {
+		WriteAndErase(2);
+		WriteAndErase(4);
+		WriteAndErase(6);
+	}
+}
+
+void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
+{
+	string wdata = createRadomString();
+	string rdata, ov_rdata;
+
+	// s1. write
+	mWrite->run(to_string(start_addr), wdata);
+	rdata = mRead->read(to_string(start_addr));
+
+	mWrite->run(to_string(start_addr), wdata);
+	ov_rdata = mRead->read(to_string(start_addr));
+
+	// s2. ReadCompare 
+	if (rdata != ov_rdata) throw std::exception();
+
+	// s3. erase
+	mErase->run(to_string(start_addr));
+	mErase->run(to_string(start_addr + 1));
+	mErase->run(to_string(start_addr + 2));
+}
