@@ -34,11 +34,14 @@ public:
 	
 	void erase(string command)
 	{
+		/*
 		FILE* pipe = _popen(command.c_str(), "r");
 		if (!pipe) {
 			cout << "erase cmd error: " << command << endl;
 		}
 		_pclose(pipe);
+		*/
+		cout << "Erase command is " << command << endl;
 	}
 	void run(string command1 = "", string command2 = "") override
 	{
@@ -70,10 +73,12 @@ public:
 			{
 				int start = stoi(command1), end = stoi(command2);
 				string command = "ssd.exe E ";
+				
 				if (start > end) command = command + command2 + " " + to_string(start - end + 1);
 				else command = command + command1 + " " + to_string(end - start + 1);
+				
 				erase(command);
-				cout << "erase_Range command is " << command << endl;
+				//cout << "erase_Range command is " << command << endl;
 			}
 		}
 		catch (invalid_argument& e)
