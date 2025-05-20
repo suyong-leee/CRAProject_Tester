@@ -45,14 +45,22 @@ public:
 	}
 	void changeLBAandSIZE(int& lba, int& size)
 	{
-		int end = lba;
-		size = abs(size);
-		lba = lba - size + 1;
-		if (lba < 0)
+		if (size < 0)
 		{
-			lba = 0;
-			size = end + 1;
+			int end = lba;
+			size = abs(size);
+			lba = lba - size + 1;
+			if (lba < 0)
+			{
+				lba = 0;
+				size = end + 1;
+			}
 		}
+		else if (lba + size -1 > 99)
+		{
+			size = 99 - lba + 1;
+		}
+		
 	}
 	void erase(string command1, string command2)
 	{
@@ -62,10 +70,9 @@ public:
 			{
 				string command;
 				int lba = stoi(command1), size = stoi(command2);
-				if (size < 0)
-				{
-					changeLBAandSIZE(lba, size);
-				}
+				
+			    changeLBAandSIZE(lba, size);
+				
 
 				int cycle = size / 10;
 				int cycleSize = 10;
