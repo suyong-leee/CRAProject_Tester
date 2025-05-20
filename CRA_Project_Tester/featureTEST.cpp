@@ -1,7 +1,7 @@
 #include "gmock/gmock.h"
 #include <string>
 #include <iostream>
-#include "tester.h"
+#include "testShell.h"
 
 using namespace testing;
 using namespace std;
