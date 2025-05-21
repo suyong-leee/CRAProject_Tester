@@ -17,6 +17,32 @@ public:
     MOCK_METHOD(ITestOperation*, getOperator, (int), (override));
 };
 
+class MockWriter : public Write
+{
+public:
+    MOCK_METHOD(void, callSSD, (string, string), (override));
+};
+
+class MockReader : public Read {
+public:
+    MOCK_METHOD(string, read, (string cmd1), (override));
+
+    MOCK_METHOD(void, run, (string, string), (override));
+
+};
+
+class MockFullWriter : public FullWrite
+{
+public:
+    MOCK_METHOD(void, callSSD, (string, string), (override));
+};
+
+class MockFullRead : public FullRead {
+public:
+    MOCK_METHOD(string, read, (string address), (override));
+};
+
+//Invalid Test
 TEST(mainfunction, InvalidCommand)
 {
     std::stringstream buffer;
@@ -36,8 +62,68 @@ TEST(mainfunction, InvalidCommand)
     EXPECT_THAT(output, testing::HasSubstr(expectResult));
 }
 
+TEST(Testwrite, InvalidWriteAddress)
+{
+    Write writer;
+    EXPECT_THROW(writer.checkAddress("101"), std::invalid_argument);
+}
 
-TEST(mainfunction,exit)
+TEST(Testwrite, InvalidWriteData1)
+{
+    Write writer;
+    EXPECT_THROW(writer.checkData("0x000G000a"), std::invalid_argument);
+}
+
+TEST(Testwrite, InvalidWriteData2)
+{
+    Write writer;
+    EXPECT_THROW(writer.checkData("0x111111111"), std::invalid_argument);
+}
+
+TEST(Testwrite, InvalidWrite)
+{
+    MockWriter writer;
+    string address = "30";
+    string data = "0xAAAAAG";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(0);
+
+    writer.run(address, data);
+}
+
+TEST(Testwrite, InvalidWrite2)
+{
+    MockWriter writer;
+    string address = "";
+    string data = "0xAAAAAG";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(0);
+
+    writer.run(address, data);
+}
+
+TEST(SSDTEST, LBAinvalid) {
+
+    MockReader mockDriver;
+    EXPECT_NO_THROW({
+    bool result = mockDriver.checkLBA("12");
+    EXPECT_TRUE(result);
+        });
+}
+
+TEST(SSDTEST, LBAinvalid2) {
+
+    MockReader mockDriver;
+    EXPECT_THROW(mockDriver.checkLBA("123"), std::invalid_argument);
+}
+
+TEST(SSDTEST, LBAinvalid3) {
+    MockReader mockDriver;
+    EXPECT_THROW(mockDriver.checkLBA("1A"), std::invalid_argument);
+}
+
+//exit test
+TEST(mainfunction, exittest)
 {
     MockTestRun runner;
     EXPECT_CALL(runner, getInput())
@@ -47,7 +133,8 @@ TEST(mainfunction,exit)
     EXPECT_EQ(false,runner.RunCommand());
 }
 
-TEST(mainfunction, read)
+//read test
+TEST(mainfunction, readtest)
 {
     MockTestRun runner;
     MockOperator mockOperator;
@@ -84,7 +171,26 @@ TEST(mainfunction, fullread)
     EXPECT_EQ(true, runner.RunCommand());
 }
 
-TEST(mainfunction, help)
+TEST(FullReadTest, CallsRead100Times) {
+    MockFullRead mock;
+
+    EXPECT_CALL(mock, read(_))
+        .Times(Exactly(100))
+        .WillRepeatedly(Return("mocked_data"));
+
+    mock.run();
+}
+
+TEST(SSDTEST, ReadNone) {
+
+    MockReader mockDriver;
+    EXPECT_CALL(mockDriver, read("3")).WillRepeatedly(Return("helloWorld"));
+
+    EXPECT_EQ(mockDriver.read("3"), "helloWorld");
+}
+
+//help test
+TEST(mainfunction, help1)
 {
     MockTestRun runner;
     MockOperator mockOperator;
@@ -102,7 +208,31 @@ TEST(mainfunction, help)
     EXPECT_EQ(true,runner.RunCommand());
 }
 
-TEST(mainfunction, write)
+TEST(mainfunction, help2)
+{
+    std::stringstream buffer;
+    std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
+
+    Help help;
+
+    std::string expectResult;
+    expectResult = "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민\n";
+    expectResult.append("How to use CMD\n");
+    expectResult.append("read (address) : (address)의 데이터를 읽음\n");
+    expectResult.append("write (address) (data) : (address)에 (data)를 씀\n");
+    expectResult.append("fullread : 모든 데이터를 읽음\n");
+    expectResult.append("fullwrite (data) : 모든 주소에 (data)를 씀\n");
+    expectResult.append("exit : 종료\n");
+    expectResult.append("help : 도움말\n");
+
+    help.run();
+    std::cout.rdbuf(old);
+    std::string output = buffer.str();
+    EXPECT_THAT(output, testing::HasSubstr(expectResult));
+}
+
+//write test
+TEST(mainfunction, writetest)
 {
     MockTestRun runner;
     MockOperator mockOperator;
@@ -122,7 +252,7 @@ TEST(mainfunction, write)
     EXPECT_EQ(true, runner.RunCommand());
 }
 
-TEST(mainfunction, fullwrite)
+TEST(mainfunction, fullwrite1)
 {
     MockTestRun runner;
     MockOperator mockOperator;
@@ -141,6 +271,28 @@ TEST(mainfunction, fullwrite)
     EXPECT_EQ(true, runner.RunCommand());
 }
 
+TEST(mainfunction, fullwrite2)
+{
+    MockFullWriter writer;
+    string data = "0xAAAAAAAA";
+    EXPECT_CALL(writer, callSSD(_, data))
+        .Times(100);
+
+    writer.run(data);
+}
+
+TEST(Testwrite, normalWrite)
+{
+    MockWriter writer;
+    string address = "30";
+    string data = "0xAAAAAAAA";
+    EXPECT_CALL(writer, callSSD(address, data))
+        .Times(1);
+
+    writer.run(address, data);
+}
+
+//scenario test
 TEST(mainfunction, scenariocommand1)
 {
     MockTestRun runner;
@@ -175,101 +327,4 @@ TEST(mainfunction, scenariocommand2)
         .Times(1);
 
     EXPECT_EQ(true, runner.RunCommand());
-}
-
-
-TEST(Help, operationtest)
-{
-    std::stringstream buffer;
-    std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
-
-    Help help;
-    
-    std::string expectResult;
-    expectResult = "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민\n";
-    expectResult.append("How to use CMD\n");
-    expectResult.append("read (address) : (address)의 데이터를 읽음\n");
-    expectResult.append("write (address) (data) : (address)에 (data)를 씀\n");
-    expectResult.append("fullread : 모든 데이터를 읽음\n");
-    expectResult.append("fullwrite (data) : 모든 주소에 (data)를 씀\n");
-    expectResult.append("exit : 종료\n");
-    expectResult.append("help : 도움말\n");
-    
-    help.run();
-    std::cout.rdbuf(old);
-    std::string output = buffer.str();
-    EXPECT_THAT(output, testing::HasSubstr(expectResult));
-}
-
-TEST(Testwrite, InvalidWriteAddress)
-{
-    Write writer;
-    EXPECT_THROW(writer.checkAddress("101"), std::invalid_argument);
-}
-
-TEST(Testwrite, InvalidWriteData1)
-{
-    Write writer;
-    EXPECT_THROW(writer.checkData("0x000G000a"), std::invalid_argument);
-}
-
-TEST(Testwrite, InvalidWriteData2)
-{
-    Write writer;
-    EXPECT_THROW(writer.checkData("0x111111111"), std::invalid_argument);
-}
-
-class MockWriter : public Write
-{
-public:
-    MOCK_METHOD(void, callSSD, (string, string), (override));
-};
-
-class MockFullWriter : public FullWrite
-{
-public:
-    MOCK_METHOD(void, callSSD, (string, string), (override));
-};
-
-TEST(Testwrite, normalWrite)
-{
-    MockWriter writer;
-    string address = "30";
-    string data = "0xAAAAAAAA";
-    EXPECT_CALL(writer, callSSD(address, data))
-        .Times(1);
-
-    writer.run(address, data);
-}
-
-TEST(Testwrite, InvalidWrite)
-{
-    MockWriter writer;
-    string address = "30";
-    string data = "0xAAAAAG";
-    EXPECT_CALL(writer, callSSD(address, data))
-        .Times(0);
-
-    writer.run(address, data);
-}
-
-TEST(Testwrite, InvalidWrite2)
-{
-    MockWriter writer;
-    string address = "";
-    string data = "0xAAAAAG";
-    EXPECT_CALL(writer, callSSD(address, data))
-        .Times(0);
-
-    writer.run(address, data);
-}
-
-TEST(TestFullWrite, NormalOperation)
-{
-    MockFullWriter writer;
-    string data = "0xAAAAAAAA";
-    EXPECT_CALL(writer, callSSD(_, data))
-        .Times(100);
-
-    writer.run(data);
 }
