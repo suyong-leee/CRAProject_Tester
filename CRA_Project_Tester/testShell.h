@@ -141,7 +141,6 @@ public:
 
 	void eraseSSD(string command)
 	{
-		cout << command << endl;
 		SSDCommandExecutor::runCommand(command);
 	}
 
