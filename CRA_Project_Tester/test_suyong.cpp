@@ -204,19 +204,19 @@ TEST(Help, operationtest)
 TEST(Testwrite, InvalidWriteAddress)
 {
     Write writer;
-    EXPECT_THROW(writer.checkAddress("101"), std::invalid_argument);
+    EXPECT_THROW(Validator::checkHexData("101"), std::invalid_argument);
 }
 
 TEST(Testwrite, InvalidWriteData1)
 {
     Write writer;
-    EXPECT_THROW(writer.checkData("0x000G000a"), std::invalid_argument);
+    EXPECT_THROW(Validator::checkHexData("0x000G000a"), std::invalid_argument);
 }
 
 TEST(Testwrite, InvalidWriteData2)
 {
     Write writer;
-    EXPECT_THROW(writer.checkData("0x111111111"), std::invalid_argument);
+    EXPECT_THROW(Validator::checkHexData("0x111111111"), std::invalid_argument);
 }
 
 class MockWriter : public Write
