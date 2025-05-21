@@ -15,8 +15,7 @@ public:
 
 		OPERATOR_FULLWRITE,
 		OPERATOR_READ,
-		FULL_SCENARIO,
-		PARAM_ONE = FULL_SCENARIO,
+		PARAM_ONE = OPERATOR_READ,
 
 		OPERATOR_FULLREAD,
 
@@ -28,6 +27,7 @@ public:
 		SCENARIO_2,
 		SCENARIO_3,
 		SCENARIO_4,
+		FULL_SCENARIO,
 		NUM_OF_OPERATOR,
 		PARAM_ZERO = NUM_OF_OPERATOR,
 	};
@@ -69,6 +69,11 @@ public:
 
 		getParameters(operationOrder);
 
+		if (operationOrder == FULL_SCENARIO)
+		{
+			parameter[0] = "testlist.txt";
+		}
+		
 		currentOperation = getOperator(operationOrder);
 
 		currentOperation->run(parameter[0], parameter[1]);
