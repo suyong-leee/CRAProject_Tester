@@ -38,6 +38,36 @@ public:
 	}
 };
 
+class SSDCommandExecutor {
+public:
+	static bool runCommand(const string& command) {
+		FILE* pipe = _popen(command.c_str(), "r");
+		if (!pipe) {
+			LOG("[ERROR] Failed to execute: " + command);
+			return false;
+		}
+		_pclose(pipe);
+		return true;
+	}
+
+	static string runReadOutput(const string& outputFile = "ssd_output.txt") {
+
+		string result;
+		ifstream file(outputFile);
+		if (file.is_open()) {
+			string line;
+			while (getline(file, line)) {
+				result += line;
+			}
+			file.close();
+		}
+		else {
+			result = "error: cannot open output file";
+		}
+		return result;
+	}
+};
+
 class ITestOperation
 {
 public:
@@ -48,21 +78,17 @@ class Flush : public ITestOperation
 {
 public:
 
-	void flush()
+	void flush(string command)
 	{
-		string command = "ssd.exe F";
 
-		FILE* pipe = _popen(command.c_str(), "r");
-		if (!pipe) {
-			cout <<  "error Flush : cannot open pipe";
-		}
-
-		_pclose(pipe);
+		SSDCommandExecutor::runCommand(command);
 
 	}
 	void run(string command1 = "", string command2 = "") override
 	{
-		flush();
+		string command = "ssd.exe F";
+
+		flush(command);
 	}
 };
 
@@ -75,14 +101,7 @@ public:
 	
 	void eraseSSD(string command)
 	{
-		
-		FILE* pipe = _popen(command.c_str(), "r");
-		if (!pipe) {
-			cout << "erase cmd error: " << command << endl;
-		}
-		_pclose(pipe);
-		
-		//cout << "Erase command is " << command << endl;
+		SSDCommandExecutor::runCommand(command);
 	}
 	void changeLBAandSIZE(int& lba, int& size)
 	{
@@ -164,7 +183,7 @@ public:
 	}
 
 };
-//example
+
 class Read : public ITestOperation
 {
 public:
@@ -179,27 +198,12 @@ public:
 		string result = "";
 		string command = "ssd.exe R " + address;
 
-		FILE* pipe = _popen(command.c_str(), "r");
-		if (!pipe) {
-			return "error: cannot open pipe";
-		}
-
-		_pclose(pipe);
-
-		ifstream file("ssd_output.txt");
-		if (file.is_open()) {
-			string line;
-			while (getline(file, line)) {
-				result += line;  // 여러 줄 출력 가능성 고려
-			}
-			file.close();
-		}
-		else {
-			result = "error: cannot open output file";
-		}
-
+		SSDCommandExecutor::runCommand(command);
+		result = SSDCommandExecutor::runReadOutput("ssd_output.txt");
+		
 		if (address.size() == 1) address = "0" + address;
 		LOG("[Read] LBA  " + address + " : " + result + "\n");
+		return result;
 	}
 
     virtual string read(string address)
@@ -269,7 +273,7 @@ public:
 		{
 			Validator::checkLBA(address);
 			Validator::checkHexData(data);
-			callSSD(address, data);
+			writeSSD(address, data);
 		}
 		catch (invalid_argument& e)
 		{
@@ -279,13 +283,13 @@ public:
 	}
 
 
-	virtual void callSSD(string address, string data)
+	virtual void writeSSD(string address, string data)
 	{
 		const char* exePath = "ssd";
 		const char* writeCmd = "W";
 
 		std::string command = std::string("\"") + exePath + " " + writeCmd + " " + address + " " + data;
-		int result = std::system(command.c_str());
+		SSDCommandExecutor::runCommand(command);
 		return;
 	}
 private:
@@ -306,7 +310,7 @@ public:
 			Validator::checkHexData(data);
 			for (int i = 0; i < 100; i++)
 			{
-				callSSD(to_string(i), data);
+				writeSSD(to_string(i), data);
 			}
 		}
 		catch (invalid_argument& e)
