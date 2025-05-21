@@ -35,12 +35,14 @@ void Logger::print(string function, string msg)
 	{
 		logFile << oss.str() << endl;
 	}
-
-	if (IsScript())
+	if (Default == 0) 
 	{
 		std::cout << oss.str() << std::endl;
 	}
-
+	else if (Default == 1)
+	{
+		std::cout << oss.str();
+	}
 }
 
 void Logger::makeZip(vector<directory_entry> &logFiles, error_code& ec) {
@@ -56,11 +58,6 @@ void Logger::makeZip(vector<directory_entry> &logFiles, error_code& ec) {
 	if (ec) {
 		cerr << "Failed to rename " << oldestFile.path() << " to " << newPath << ": " << ec.message() << '\n';
 	}
-}
-
-bool Logger::IsScript()
-{
-	return Default == 0;
 }
 
 void Logger::findUntilFile(vector<filesystem::directory_entry>& logFiles)

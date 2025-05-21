@@ -78,6 +78,51 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 	}
 }
 
+void SSDTest_FullScenario::run(string file_name, string param2)
+{
+	FILE* f;
+	fopen_s(&f, "test.txt", "r");
+	if (!f) throw std::exception();
+	Logger::getInstance().setLogType(1);
+	char word[128];
+	while (fgets(word, sizeof(word), f) != nullptr)
+	{
+		string tsname(word);
+		ITestOperation* scenario = nullptr;
+
+		if (tsname.find("1_") != string::npos) scenario = new SSDTest_FullWriteAndReadCompare(new Write, new Read);
+		else if (tsname.find("2_") != string::npos) scenario = new SSDTest_PartialLBAWrite(new Write, new Read);
+		else if (tsname.find("3_") != string::npos) scenario = new SSDTest_WriteReadAging(new Write, new Read);
+		else if (tsname.find("4_") != string::npos) scenario = new SSDTest_EraseAndWriteAging(new Write, new Read, new Erase);
+		else
+		{
+			fclose(f);
+			throw std::exception();
+		}
+
+		try
+		{
+			LOG(tsname+"   ___   Run... ");
+			Logger::getInstance().setLogType(3);
+			scenario->run("", "");
+			Logger::getInstance().setLogType(1);
+			LOG("Pass\n");
+			delete scenario;
+		}
+		catch (exception& e)
+		{
+			Logger::getInstance().setLogType(1);
+			LOG("FAIL!\n");
+			Logger::getInstance().setLogType(0);
+			fclose(f);
+			throw std::exception();
+		}
+	}
+	Logger::getInstance().setLogType(0);
+	fclose(f);
+
+}
+
 void SSDTest_EraseAndWriteAging::run(string param1, string param2)
 {
 	if (mWrite == nullptr)    mWrite = new Write;
@@ -111,47 +156,4 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 
 	// s3. erase
 	mErase->run(to_string(start_addr), "3");
-}
-
-void SSDTest_FullScenario::run(string file_name, string param2)
-{
-	FILE* f;
-	Logger::getInstance().setLogType(1);
-	fopen_s(&f, file_name.c_str(), "r");
-	if (!f) throw std::exception();
-
-	char word[128];
-	while (fgets(word, sizeof(word), f) != nullptr)
-	{
-		string tsname(word);
-		ITestOperation* scenario = nullptr;
-
-		if (tsname.find("1_") != string::npos) scenario = new SSDTest_FullWriteAndReadCompare(new Write, new Read);
-		else if (tsname.find("2_") != string::npos) scenario = new SSDTest_PartialLBAWrite(new Write, new Read);
-		else if (tsname.find("3_") != string::npos) scenario = new SSDTest_WriteReadAging(new Write, new Read);
-		else if (tsname.find("4_") != string::npos) scenario = new SSDTest_EraseAndWriteAging(new Write, new Read, new Erase);
-		else
-		{
-			fclose(f);
-			throw std::exception();
-		}
-
-		try
-		{
-			LOG("Run... ");
-			scenario->run("", "");
-			LOG("Pass\n");
-			delete scenario;
-		}
-		catch (exception& e)
-		{
-			LOG("FAIL!\n");
-			fclose(f);
-			Logger::getInstance().setLogType(0);
-			throw std::exception();
-		}
-	}
-	fclose(f);
-	Logger::getInstance().setLogType(0);
-
 }
