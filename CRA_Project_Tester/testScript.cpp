@@ -81,7 +81,7 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 void SSDTest_FullScenario::run(string file_name, string param2)
 {
 	FILE* f;
-	fopen_s(&f, "test.txt", "r");
+	fopen_s(&f, file_name.c_str(), "r");
 	if (!f) throw std::exception();
 	Logger::getInstance().setLogType(1);
 	char word[128];
@@ -102,6 +102,10 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 
 		try
 		{
+			if (!tsname.empty() && tsname.back() == '\n') 
+			{
+				tsname.pop_back();
+			}
 			LOG(tsname+"   ___   Run... ");
 			Logger::getInstance().setLogType(3);
 			scenario->run("", "");
