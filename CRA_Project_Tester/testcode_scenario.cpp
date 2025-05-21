@@ -9,28 +9,28 @@ using namespace testing;
 
 class MockWriteDriver_ : public Write {
 public:
-    MOCK_METHOD(void, run, (std::string, std::string), (override));
-    MOCK_METHOD(void, write, (std::string address, std::string data), ());
-    std::map<std::string, std::string> writtenData;
+	MOCK_METHOD(void, run, (std::string, std::string), (override));
+	MOCK_METHOD(void, write, (std::string address, std::string data), ());
+	std::map<std::string, std::string> writtenData;
 
-    void writeData(const std::string& address, const std::string& data) {
-        writtenData[address] = data;
-    }
+	void writeData(const std::string& address, const std::string& data) {
+		writtenData[address] = data;
+	}
 };
 
 class MockReadDriver_ : public Read {
 public:
-    MOCK_METHOD(void, run, (std::string, std::string), (override));
-    MOCK_METHOD(string, read, (std::string address), ());
-    MockWriteDriver_* mockWriteDriver;
+	MOCK_METHOD(void, run, (std::string, std::string), (override));
+	MOCK_METHOD(string, read, (std::string address), ());
+	MockWriteDriver_* mockWriteDriver;
 
-    std::string readData(const std::string& address) {
-        auto it = mockWriteDriver->writtenData.find(address);
-        if (it != mockWriteDriver->writtenData.end()) {
-            return it->second; 
-        }
-        return ""; 
-    }
+	std::string readData(const std::string& address) {
+		auto it = mockWriteDriver->writtenData.find(address);
+		if (it != mockWriteDriver->writtenData.end()) {
+			return it->second;
+		}
+		return "";
+	}
 };
 
 class MockEraseDriver_ : public Erase {
@@ -40,79 +40,79 @@ public:
 
 class SSDTestFixtureFullWriteAndReadCompare : public ::testing::Test {
 protected:
-    MockWriteDriver_ mockWrite;
-    MockReadDriver_ mockRead;
-    SSDTest_FullWriteAndReadCompare* ssd;
+	MockWriteDriver_ mockWrite;
+	MockReadDriver_ mockRead;
+	SSDTest_FullWriteAndReadCompare* ssd;
 
-    void SetUp() override {
-        ssd = new SSDTest_FullWriteAndReadCompare(&mockWrite, &mockRead);
-    }
+	void SetUp() override {
+		ssd = new SSDTest_FullWriteAndReadCompare(&mockWrite, &mockRead);
+	}
 
-    void TearDown() override {
-        delete ssd;
-    }
+	void TearDown() override {
+		delete ssd;
+	}
 };
 
 class LoggerTest : public ::testing::Test {
 protected:
-    std::string logFilename = "latest.log";
+	std::string logFilename = "latest.log";
 
-    void SetUp() override {
-        std::remove(logFilename.c_str());
-    }
+	void SetUp() override {
+		std::remove(logFilename.c_str());
+	}
 
-    void TearDown() override {
-        std::remove(logFilename.c_str());
-    }
+	void TearDown() override {
+		std::remove(logFilename.c_str());
+	}
 };
 
 TEST_F(SSDTestFixtureFullWriteAndReadCompare, FullWriteAndReadCompareFailTest) {
-    EXPECT_CALL(mockWrite, run(_, _)).Times(::testing::AnyNumber());
-    EXPECT_CALL(mockRead, read(_))
-        .Times(::testing::AnyNumber())
-        .WillOnce(::testing::Return("0x12341234"));
+	EXPECT_CALL(mockWrite, run(_, _)).Times(::testing::AnyNumber());
+	EXPECT_CALL(mockRead, read(_))
+		.Times(::testing::AnyNumber())
+		.WillOnce(::testing::Return("0x12341234"));
 
-    EXPECT_THROW(ssd->run("", ""), exception);
+	EXPECT_THROW(ssd->run("", ""), exception);
 }
 
 TEST_F(SSDTestFixtureFullWriteAndReadCompare, FullWriteAndReadCompareTest) {
 
-    EXPECT_CALL(mockWrite, run(_, _))
-        .Times(::testing::AnyNumber())
-        .WillRepeatedly([this](std::string address, std::string data) {
-        mockWrite.writtenData[address] = data;
-            });
+	EXPECT_CALL(mockWrite, run(_, _))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address, std::string data) {
+		mockWrite.writtenData[address] = data;
+			});
 
 
-    EXPECT_CALL(mockRead, read(_))
-        .Times(::testing::AnyNumber())
-        .WillRepeatedly([this](std::string address) {
-        return mockWrite.writtenData[address]; 
-            });
+	EXPECT_CALL(mockRead, read(_))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address) {
+		return mockWrite.writtenData[address];
+			});
 
-    ssd->run("", "");
+	ssd->run("", "");
 }
 
 TEST_F(LoggerTest, LogMessageIsWrittenToFile) {
-    
-    std::string testMessage = "This is a test log entry";
-    LOG(testMessage);
-    std::ifstream infile(logFilename);
-    ASSERT_TRUE(infile.is_open()) << "Log file could not be opened.";
 
-    std::string line;
-    bool found = false; 
+	std::string testMessage = "This is a test log entry";
+	LOG(testMessage);
+	std::ifstream infile(logFilename);
+	ASSERT_TRUE(infile.is_open()) << "Log file could not be opened.";
 
-    while (std::getline(infile, line)) {
-        if (line.find(testMessage) != std::string::npos )
-        {
-            found = true;
-            break;
-        }
-    }
+	std::string line;
+	bool found = false;
 
-    infile.close();
-    ASSERT_TRUE(found) << "Log message not found in log file.";
+	while (std::getline(infile, line)) {
+		if (line.find(testMessage) != std::string::npos)
+		{
+			found = true;
+			break;
+		}
+	}
+
+	infile.close();
+	ASSERT_TRUE(found) << "Log message not found in log file.";
 }
 
 TEST(SDDTEST, DISABLED_PartialLBAWrite)

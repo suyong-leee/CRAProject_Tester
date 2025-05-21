@@ -7,7 +7,7 @@ using namespace testing;
 class MockOperator : public ITestOperation
 {
 public:
-    MOCK_METHOD(void, run, (string,string), (override));
+    MOCK_METHOD(void, run, (string, string), (override));
 };
 
 class MockTestRun : public TestRun
@@ -20,7 +20,7 @@ public:
 class MockWriter : public Write
 {
 public:
-    MOCK_METHOD(void, callSSD, (string, string), (override));
+    MOCK_METHOD(void, writeSSD, (string, string), (override));
 };
 
 class MockReader : public Read {
@@ -34,7 +34,7 @@ public:
 class MockFullWriter : public FullWrite
 {
 public:
-    MOCK_METHOD(void, callSSD, (string, string), (override));
+    MOCK_METHOD(void, writeSSD, (string, string), (override));
 };
 
 class MockFullRead : public FullRead {
@@ -65,19 +65,19 @@ TEST(mainfunction, InvalidCommand)
 TEST(Testwrite, InvalidWriteAddress)
 {
     Write writer;
-    EXPECT_THROW(writer.checkAddress("101"), std::invalid_argument);
+    EXPECT_THROW(Validator::checkHexData("101"), std::invalid_argument);
 }
 
 TEST(Testwrite, InvalidWriteData1)
 {
     Write writer;
-    EXPECT_THROW(writer.checkData("0x000G000a"), std::invalid_argument);
+    EXPECT_THROW(Validator::checkHexData("0x000G000a"), std::invalid_argument);
 }
 
 TEST(Testwrite, InvalidWriteData2)
 {
     Write writer;
-    EXPECT_THROW(writer.checkData("0x111111111"), std::invalid_argument);
+    EXPECT_THROW(Validator::checkHexData("0x111111111"), std::invalid_argument);
 }
 
 TEST(Testwrite, InvalidWrite)
@@ -85,7 +85,7 @@ TEST(Testwrite, InvalidWrite)
     MockWriter writer;
     string address = "30";
     string data = "0xAAAAAG";
-    EXPECT_CALL(writer, callSSD(address, data))
+    EXPECT_CALL(writer, writeSSD(address, data))
         .Times(0);
 
     writer.run(address, data);
@@ -96,7 +96,7 @@ TEST(Testwrite, InvalidWrite2)
     MockWriter writer;
     string address = "";
     string data = "0xAAAAAG";
-    EXPECT_CALL(writer, callSSD(address, data))
+    EXPECT_CALL(writer, writeSSD(address, data))
         .Times(0);
 
     writer.run(address, data);
@@ -106,7 +106,7 @@ TEST(SSDTEST, LBAinvalid) {
 
     MockReader mockDriver;
     EXPECT_NO_THROW({
-    bool result = mockDriver.checkLBA("12");
+    bool result = Validator::checkLBA("12");
     EXPECT_TRUE(result);
         });
 }
@@ -114,12 +114,12 @@ TEST(SSDTEST, LBAinvalid) {
 TEST(SSDTEST, LBAinvalid2) {
 
     MockReader mockDriver;
-    EXPECT_THROW(mockDriver.checkLBA("123"), std::invalid_argument);
+    EXPECT_THROW(Validator::checkLBA("123"), std::invalid_argument);
 }
 
 TEST(SSDTEST, LBAinvalid3) {
     MockReader mockDriver;
-    EXPECT_THROW(mockDriver.checkLBA("1A"), std::invalid_argument);
+    EXPECT_THROW(Validator::checkLBA("1A"), std::invalid_argument);
 }
 
 //exit test
@@ -129,8 +129,8 @@ TEST(mainfunction, exittest)
     EXPECT_CALL(runner, getInput())
         .Times(1)
         .WillRepeatedly(Return("exit"));
-    
-    EXPECT_EQ(false,runner.RunCommand());
+
+    EXPECT_EQ(false, runner.RunCommand());
 }
 
 //read test
@@ -150,7 +150,7 @@ TEST(mainfunction, readtest)
     EXPECT_CALL(mockOperator, run(_, _))
         .Times(1);
 
-    EXPECT_EQ(true,runner.RunCommand());
+    EXPECT_EQ(true, runner.RunCommand());
 }
 
 TEST(mainfunction, fullread)
@@ -205,7 +205,7 @@ TEST(mainfunction, help1)
     EXPECT_CALL(mockOperator, run(_, _))
         .Times(1);
 
-    EXPECT_EQ(true,runner.RunCommand());
+    EXPECT_EQ(true, runner.RunCommand());
 }
 
 TEST(mainfunction, help2)
@@ -275,7 +275,7 @@ TEST(mainfunction, fullwrite2)
 {
     MockFullWriter writer;
     string data = "0xAAAAAAAA";
-    EXPECT_CALL(writer, callSSD(_, data))
+    EXPECT_CALL(writer, writeSSD(_, data))
         .Times(100);
 
     writer.run(data);
@@ -286,7 +286,7 @@ TEST(Testwrite, normalWrite)
     MockWriter writer;
     string address = "30";
     string data = "0xAAAAAAAA";
-    EXPECT_CALL(writer, callSSD(address, data))
+    EXPECT_CALL(writer, writeSSD(address, data))
         .Times(1);
 
     writer.run(address, data);
@@ -300,7 +300,7 @@ TEST(mainfunction, scenariocommand1)
     EXPECT_CALL(runner, getInput())
         .Times(1)
         .WillOnce(Return("1_"));
-    
+
     EXPECT_CALL(runner, getOperator(TestRun::SCENARIO_1))
         .Times(1)
         .WillRepeatedly(Return(&mockOperator));
@@ -328,103 +328,3 @@ TEST(mainfunction, scenariocommand2)
 
     EXPECT_EQ(true, runner.RunCommand());
 }
-<<<<<<< HEAD:CRA_Project_Tester/test_suyong.cpp
-
-
-TEST(Help, operationtest)
-{
-    std::stringstream buffer;
-    std::streambuf* old = std::cout.rdbuf(buffer.rdbuf());
-
-    Help help;
-    
-    std::string expectResult;
-    expectResult = "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민\n";
-    expectResult.append("How to use CMD\n");
-    expectResult.append("read (address) : (address)의 데이터를 읽음\n");
-    expectResult.append("write (address) (data) : (address)에 (data)를 씀\n");
-    expectResult.append("fullread : 모든 데이터를 읽음\n");
-    expectResult.append("fullwrite (data) : 모든 주소에 (data)를 씀\n");
-    expectResult.append("exit : 종료\n");
-    expectResult.append("help : 도움말\n");
-    
-    help.run();
-    std::cout.rdbuf(old);
-    std::string output = buffer.str();
-    EXPECT_THAT(output, testing::HasSubstr(expectResult));
-}
-
-TEST(Testwrite, InvalidWriteAddress)
-{
-    Write writer;
-    EXPECT_THROW(Validator::checkHexData("101"), std::invalid_argument);
-}
-
-TEST(Testwrite, InvalidWriteData1)
-{
-    Write writer;
-    EXPECT_THROW(Validator::checkHexData("0x000G000a"), std::invalid_argument);
-}
-
-TEST(Testwrite, InvalidWriteData2)
-{
-    Write writer;
-    EXPECT_THROW(Validator::checkHexData("0x111111111"), std::invalid_argument);
-}
-
-class MockWriter : public Write
-{
-public:
-    MOCK_METHOD(void, writeSSD, (string, string), (override));
-};
-
-class MockFullWriter : public FullWrite
-{
-public:
-    MOCK_METHOD(void, writeSSD, (string, string), (override));
-};
-
-TEST(Testwrite, normalWrite)
-{
-    MockWriter writer;
-    string address = "30";
-    string data = "0xAAAAAAAA";
-    EXPECT_CALL(writer, writeSSD(address, data))
-        .Times(1);
-
-    writer.run(address, data);
-}
-
-TEST(Testwrite, InvalidWrite)
-{
-    MockWriter writer;
-    string address = "30";
-    string data = "0xAAAAAG";
-    EXPECT_CALL(writer, writeSSD(address, data))
-        .Times(0);
-
-    writer.run(address, data);
-}
-
-TEST(Testwrite, InvalidWrite2)
-{
-    MockWriter writer;
-    string address = "";
-    string data = "0xAAAAAG";
-    EXPECT_CALL(writer, writeSSD(address, data))
-        .Times(0);
-
-    writer.run(address, data);
-}
-
-TEST(TestFullWrite, NormalOperation)
-{
-    MockFullWriter writer;
-    string data = "0xAAAAAAAA";
-    EXPECT_CALL(writer, writeSSD(_, data))
-        .Times(100);
-
-    writer.run(data);
-}
-=======
->>>>>>> master:CRA_Project_Tester/testcode_feature.cpp
