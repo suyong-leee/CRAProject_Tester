@@ -41,9 +41,9 @@ public:
 		operators[OPERATOR_ERASE_RANGE] = new EraseRange;
 		operators[OPERATOR_FLUSH] = new Flush;
 
-		operators[SCENARIO_1] = new SSDTest_FullWriteAndReadCompare(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
-		operators[SCENARIO_2] = new SSDTest_PartialLBAWrite(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
-		operators[SCENARIO_3] = new SSDTest_WriteReadAging(reinterpret_cast<Write*>(operators[OPERATOR_WRITE]), reinterpret_cast<Read*>(operators[OPERATOR_READ]));
+		operators[SCENARIO_1] = new SSDTest_FullWriteAndReadCompare;
+		operators[SCENARIO_2] = new SSDTest_PartialLBAWrite;
+		operators[SCENARIO_3] = new SSDTest_WriteReadAging;
 		operators[SCENARIO_4] = new SSDTest_EraseAndWriteAging;
 	}
 	bool RunCommand()

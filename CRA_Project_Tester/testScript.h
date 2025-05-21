@@ -4,11 +4,12 @@
 class SSDTest_FullWriteAndReadCompare :public ITestOperation
 {
 public:
-	SSDTest_FullWriteAndReadCompare(Write* w, Read* r) : write(w), read(r) {};
+	SSDTest_FullWriteAndReadCompare(Write* w, Read* r) : mWrite(w), mRead(r) {};
+	SSDTest_FullWriteAndReadCompare() : mWrite(nullptr), mRead(nullptr) {};
 	void run(string command1 = "", string command2 = "") override;
 private:
-	Write* write;
-	Read* read;
+	Write* mWrite;
+	Read* mRead;
 };
 
 
