@@ -242,7 +242,7 @@ public:
     void run(string command1 = "", string command2 = "") override
     {
 		fullread();
-		read;
+		return;
     }
 
 	void fullread()
