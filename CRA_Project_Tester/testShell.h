@@ -10,6 +10,34 @@ constexpr int ERASE_BLOCK_SIZE = 10;
 constexpr int FULL_READ_SIZE = 100;
 
 using namespace std;
+
+class Validator {
+public:
+	static bool checkLBA(const string& lba) {
+		if (lba.empty() || lba.size() > 2)
+			throw invalid_argument("LBA 범위는 0 ~ 99");
+
+		for (char ch : lba) {
+			if (!isdigit(ch))
+				throw invalid_argument("0~9 사이 수만 가능");
+		}
+		return true;
+	}
+
+	static bool checkHexData(const string& data) {
+		if (data.size() != 10)
+		{
+			throw invalid_argument("16진수 8자리만 입력가능");
+		}
+		for (int i = 2; i < data.size(); i++)
+		{
+			if ((data[i] >= '0' && data[i] <= '9') || (data[i] >= 'A' && data[i] <= 'F')) continue;
+			else throw invalid_argument("0 ~ 9사이 A~F만 가능");
+		}
+		return true;
+	}
+};
+
 class ITestOperation
 {
 public:
@@ -43,23 +71,7 @@ public:
 class Erase : public ITestOperation
 {
 public:
-	bool checkLBA(string LBA)
-	{
-		if (LBA.size() > 2)
-		{
-			throw invalid_argument("세 자리 이상 불가.");
-		}
-		if (LBA.size() == 0)
-		{
-			throw invalid_argument("한 자리 이상 입력 필수");
-		}
-		for (int i = 0; i < LBA.size(); i++)
-		{
-			if (LBA[i] >= '0' && LBA[i] <= '9') continue;
-			else throw invalid_argument("0 ~ 9 사이 수만 가능");
-		}
-		return true;
-	}
+	
 	
 	void eraseSSD(string command)
 	{
@@ -95,12 +107,13 @@ public:
 	{
 		try
 		{
-		    if (checkLBA(command1))
+		    if (Validator::checkLBA(command1))
 		    {
 		        string command;
 		        int lba = stoi(command1), size = stoi(command2);
 				
 				changeLBAandSIZE(lba, size);
+
 
 		    	int cycle = size / ERASE_BLOCK_SIZE;
 				int cycleSize = ERASE_BLOCK_SIZE;
@@ -135,7 +148,7 @@ public:
 	{
 		try
 		{
-			if (checkLBA(command1) && checkLBA(command2))
+			if (Validator::checkLBA(command1) && Validator::checkLBA(command2))
 			{
 				int start = stoi(command1), end = stoi(command2);
 				int size = abs(start - end) + 1;
@@ -155,24 +168,6 @@ public:
 class Read : public ITestOperation
 {
 public:
-    bool checkLBA(string LBA)
-    {
-
-	    if (LBA.size() > 2)
-	    {
-		    throw invalid_argument("세 자리 이상 불가.");
-	    }
-	    if (LBA.size() == 0)
-	    {
-		    throw invalid_argument("한 자리 이상 입력 필수");
-	    }
-	    for (int i = 0; i < LBA.size(); i++)
-	    {
-		    if (LBA[i] >= '0' && LBA[i] <= '9') continue;
-		    else throw invalid_argument("0 ~ 9 사이 수만 가능");
-	    }
-	    return true;
-    }
 
     void run(string command1 = "",string command2 = "") override
     {
@@ -187,7 +182,7 @@ public:
 
 		try
 		{
-			if (checkLBA(address))
+			if (Validator::checkLBA(address))
 			{
 				string command = "ssd.exe R " + address;
 
@@ -217,6 +212,7 @@ public:
 		catch (invalid_argument& e)
 		{
 			LOG("error message : %s\n", e.what());
+			cout << "error message : " << e.what() << endl;
 		}
 	return result;
     }
@@ -267,8 +263,8 @@ public:
 	{
 		try
 		{
-			checkAddress(address);
-			checkData(data);
+			Validator::checkLBA(address);
+			Validator::checkHexData(data);
 			callSSD(address, data);
 		}
 		catch (invalid_argument& e)
@@ -278,33 +274,6 @@ public:
 		return;
 	}
 
-	bool checkAddress(string address)
-	{
-		if (address.size() > 2 || address.size() == 0)
-		{
-			throw invalid_argument("0~99 사이만 가능.");
-		}
-		for (int i = 0; i < address.size(); i++)
-		{
-			if (address[i] >= '0' && address[i] <= '9') continue;
-			else throw invalid_argument("0 ~ 9사이 수만 가능");
-		}
-		return true;
-	}
-
-	bool checkData(string data)
-	{
-		if (data.size() != 10)
-		{
-			throw invalid_argument("16진수 8자리만 입력가능");
-		}
-		for (int i = 2; i < data.size(); i++)
-		{
-			if ((data[i] >= '0' && data[i] <= '9') || (data[i] >= 'A' && data[i] <= 'F')) continue;
-			else throw invalid_argument("0 ~ 9사이 A~F만 가능");
-		}
-		return true;
-	}
 
 	virtual void callSSD(string address, string data)
 	{
@@ -330,7 +299,7 @@ public:
 	{
 		try
 		{
-			checkData(data);
+			Validator::checkHexData(data);
 			for (int i = 0; i < 100; i++)
 			{
 				callSSD(to_string(i), data);
