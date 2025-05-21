@@ -33,13 +33,9 @@ void Logger::print(string function, string msg)
 	ofstream logFile(logFileName,ios::app);
 	if (logFile.is_open()) 
 	{
-		logFile << oss.str() << endl;
+		logFile << oss.str();
 	}
-	if (Default == 0) 
-	{
-		std::cout << oss.str() << std::endl;
-	}
-	else if (Default == 1)
+	if (Default != 3) 
 	{
 		std::cout << oss.str();
 	}
