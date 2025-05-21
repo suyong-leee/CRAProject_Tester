@@ -84,15 +84,12 @@ void SSDTest_EraseAndWriteAging::run(string param1, string param2)
 	if (mRead == nullptr)    mRead = new Read;
 	if (mErase == nullptr)    mErase = new Erase;
 
-	mErase->run("0");
-	mErase->run("1");
-	mErase->run("2");
+	mErase->run("0", "3");
 
-	for (int loop = 0; loop < 30; loop++) {
-		WriteAndErase(2);
-		WriteAndErase(4);
-		WriteAndErase(6);
-	}
+	for (int loop = 0; loop < 30; loop++)
+		for(int addr = 2; addr <= 98 ; addr += 2)
+		    WriteAndErase(addr);
+  
 }
 
 void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
@@ -113,9 +110,7 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 	CompareData(wdata, rdata);
 
 	// s3. erase
-	mErase->run(to_string(start_addr));
-	mErase->run(to_string(start_addr + 1));
-	mErase->run(to_string(start_addr + 2));
+	mErase->run(to_string(start_addr), "3");
 }
 
 void SSDTest_FullScenario::run(string file_name, string param2)
