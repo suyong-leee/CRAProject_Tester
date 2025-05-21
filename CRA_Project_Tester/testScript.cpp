@@ -110,7 +110,7 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 	wdata = createRandomString();
 	mWrite->run(to_string(start_addr), wdata);
 	rdata = mRead->read(to_string(start_addr));
-	CompareData(wdata, rdata);
+	CompareData(wdata, rdata);	
 
 	// s3. erase
 	mErase->run(to_string(start_addr));
@@ -121,7 +121,7 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 void SSDTest_FullScenario::run(string file_name, string param2)
 {
 	FILE* f;
-	loggerInstance.setLogType(1);
+	Logger::getInstance().setLogType(1);
 	fopen_s(&f, file_name.c_str(), "r");
 	if (!f) throw std::exception();
 
@@ -152,10 +152,11 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		{
 			LOG("FAIL!\n");
 			fclose(f);
-			loggerInstance.setLogType(0);
+			Logger::getInstance().setLogType(0);
 			throw std::exception();
 		}
 	}
 	fclose(f);
-	loggerInstance.setLogType(0);
+	Logger::getInstance().setLogType(0);
+
 }

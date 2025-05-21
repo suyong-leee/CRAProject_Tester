@@ -76,7 +76,7 @@ TEST_F(SSDTestFixture, FullWriteAndReadCompareTest) {
 
 class LoggerTest : public ::testing::Test {
 protected:
-    std::string logFilename = "test.log";
+    std::string logFilename = "latest.log";
 
     void SetUp() override {
         std::remove(logFilename.c_str());
@@ -88,10 +88,9 @@ protected:
 };
 
 TEST_F(LoggerTest, LogMessageIsWrittenToFile) {
-    Logger logger(logFilename);
     
     std::string testMessage = "This is a test log entry";
-    logger.print(__FUNCTION__, testMessage);
+    LOG(testMessage);
     std::ifstream infile(logFilename);
     ASSERT_TRUE(infile.is_open()) << "Log file could not be opened.";
 

@@ -83,7 +83,7 @@ public:
 	{
 		return operators[operation];
 	}
-	Logger loggerInstance;
+
 private:
 	ITestOperation* currentOperation = nullptr;
 	ITestOperation* operators[NUM_OF_OPERATOR] = { nullptr, };

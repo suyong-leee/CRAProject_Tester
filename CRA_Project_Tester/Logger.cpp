@@ -1,6 +1,9 @@
 #include"Logger.h"
 #include "Util.h"
 
+Logger::Logger(const std::string& filename) : logFileName(filename) {
+}
+
 void Logger::print(std::string function, std::string msg)
 {
 	namespace fs = std::filesystem;

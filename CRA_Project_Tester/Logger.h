@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <iostream>
 #include <iomanip>
@@ -12,15 +12,23 @@
 
 class Logger {
 public:
-	Logger(const std::string& filename = "latest.log") : logFileName(filename) {}
+	static Logger& getInstance() {
+		static Logger instance("latest.log");
+		return instance;
+	}
+
 	void print(std::string function , std::string msg);
 	void setLogType(int type);
 	std::string getNewfileName( tm& localTime);
 	std::ostringstream getprintFormat(tm& localTime, std::string& function, std::string& msg);
+
 private:
+	Logger(const std::string& filename);  // private 생성자
+	Logger(const Logger&) = delete;       // 복사 방지
+	Logger& operator=(const Logger&) = delete;
 	std::string logFileName ; 
 	int Default = 0;
 };
 
-#define LOG(msg) loggerInstance.print(__FUNCTION__, msg)
-extern Logger loggerInstance;
+#define LOG(msg) Logger::getInstance().print(__FUNCTION__, msg)
+
