@@ -115,6 +115,52 @@ TEST_F(LoggerTest, LogMessageIsWrittenToFile) {
 	ASSERT_TRUE(found) << "Log message not found in log file.";
 }
 
+TEST_F(LoggerTest, makeZipTest) {
+	LOG("ZIP TEST START\n");
+	std::string filename = "until_.log";
+	std::ofstream logFile(filename);
+	if (logFile.is_open()) {
+		logFile << "This is a log entry." << std::endl;
+		logFile.close();
+		std::cout << "Log written to " << filename << "\n";
+	}
+
+
+	filename = "until_2.log";
+	std::ofstream logFile2(filename);
+	if (logFile2.is_open()) {
+		logFile2 << "This is a log entry2." << std::endl;
+		logFile2.close();
+		std::cout << "Log written to " << filename << "\n";
+	}
+
+	LOG("ZIP TEST\n");
+
+	if (std::remove(filename.c_str()) == 0) {
+		std::cout << filename << " deleted successfully.\n";
+	}
+
+	filename = "until_.log";
+	if (std::remove(filename.c_str()) == 0) {
+		std::cout << filename << " deleted successfully.\n";
+	}
+
+}
+
+TEST_F(LoggerTest, 10KBTest) {
+
+	const std::string filename = "latest.log";
+	const size_t fileSizeInBytes = 11 * 1024; // 10KB = 10 * 1024 bytes
+
+	std::ofstream file(filename, std::ios::binary);
+	if (file.is_open()) {
+		std::string content(fileSizeInBytes, 'A'); // 'A' 문자로 10KB 채움
+		file << content;
+		file.close();
+	}
+	LOG("10KB TEST\n");
+}
+
 TEST(SDDTEST, DISABLED_PartialLBAWrite)
 {
 	MockWriteDriver_ mkwr;
