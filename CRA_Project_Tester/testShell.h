@@ -174,39 +174,44 @@ public:
 	    read(command1);
         return;
     }
+	string readSSD(string address)
+	{
+		string result = "";
+		string command = "ssd.exe R " + address;
+
+		FILE* pipe = _popen(command.c_str(), "r");
+		if (!pipe) {
+			return "error: cannot open pipe";
+		}
+
+		_pclose(pipe);
+
+		ifstream file("ssd_output.txt");
+		if (file.is_open()) {
+			string line;
+			while (getline(file, line)) {
+				result += line;  // 여러 줄 출력 가능성 고려
+			}
+			file.close();
+		}
+		else {
+			result = "error: cannot open output file";
+		}
+
+		if (address.size() == 1) address = "0" + address;
+		LOG("[Read] LBA  " + address + " : " + result + "\n");
+	}
 
     virtual string read(string address)
     {
 
-		string result;
+		string result = "";
 
 		try
 		{
 			if (Validator::checkLBA(address))
 			{
-				string command = "ssd.exe R " + address;
-
-				FILE* pipe = _popen(command.c_str(), "r");
-				if (!pipe) {
-					return "error: cannot open pipe";
-				}
-				
-				_pclose(pipe);
-
-				ifstream file("ssd_output.txt");
-				if (file.is_open()) {
-					string line;
-					while (getline(file, line)) {
-						result += line ;  // 여러 줄 출력 가능성 고려
-					}
-					file.close();
-				}
-				else {
-					result = "error: cannot open output file";
-				}
-
-				if (address.size() == 1) address = "0" + address;
-				LOG("[Read] LBA  "+address+" : "+result+"\n");
+				result = readSSD(address);
 			}
 		}
 		catch (invalid_argument& e)
@@ -214,7 +219,7 @@ public:
 			LOG("error message : %s\n", e.what());
 			cout << "error message : " << e.what() << endl;
 		}
-	return result;
+		return result;
     }
 
 };
@@ -228,7 +233,6 @@ public:
         {
 	        string lba = to_string(i);
 	        read(lba);
- 
 		}
     }
 
