@@ -114,17 +114,16 @@ public:
 
 				changeLBAandSIZE(lba, size);
 
-
 				int cycle = size / ERASE_BLOCK_SIZE;
-				int cycleSize = ERASE_BLOCK_SIZE;
+				int eraseSize = ERASE_BLOCK_SIZE;
 				int remainSize = size;
 
 				for (int i = 0; i <= cycle; i++)
 				{
-					if (remainSize < ERASE_BLOCK_SIZE) cycleSize = remainSize;
+					if (remainSize < ERASE_BLOCK_SIZE) eraseSize = remainSize;
 					
 					const string eraseCmd = "E";
-					string command = eraseCmd + " " + to_string(lba) + " " + to_string(cycleSize);
+					string command = eraseCmd + " " + to_string(lba) + " " + to_string(eraseSize);
 
 					eraseSSD(command);
 
