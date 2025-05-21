@@ -4,6 +4,9 @@
 #include <string>
 #include <cstdio>
 #include "Logger.h"
+
+#define MAX_LBA 99
+
 using namespace std;
 class ITestOperation
 {
@@ -11,6 +14,29 @@ public:
 	virtual void run(string command = "", string command2 = "") = 0;
 
 };
+class Flush : public ITestOperation
+{
+public:
+
+	void flush()
+	{
+		string command = "ssd.exe F";
+
+		FILE* pipe = _popen(command.c_str(), "r");
+		if (!pipe) {
+			cout <<  "error Flush : cannot open pipe";
+		}
+
+		_pclose(pipe);
+
+	}
+	void run(string command1 = "", string command2 = "") override
+	{
+		flush();
+	}
+};
+
+
 
 class Erase : public ITestOperation
 {
@@ -46,46 +72,51 @@ public:
 	}
 	void changeLBAandSIZE(int& lba, int& size)
 	{
-		int end = lba;
-		size = abs(size);
-		lba = lba - size + 1;
-		if (lba < 0)
+		if (size < 0)
 		{
-			lba = 0;
-			size = end + 1;
+			int end = lba;
+			size = abs(size);
+			lba = lba - size + 1;
+			if (lba < 0)
+			{
+				lba = 0;
+				size = end + 1;
+			}
 		}
+		else if (lba + size -1 > MAX_LBA)
+		{
+			size = MAX_LBA - lba + 1;
+		}
+		
 	}
 	void erase(string command1, string command2)
 	{
 		try
 		{
-			if (checkLBA(command1))
+		    if (checkLBA(command1))
+		    {
+		        string command;
+		        int lba = stoi(command1), size = stoi(command2);
+			
+    	  	        changeLBAandSIZE(lba, size);
+			    
+		    	int cycle = size / 10;
+			int cycleSize = 10;
+			int remainSize = size;
+
+			for (int i = 0; i <= cycle; i++)
 			{
-				string command;
-				int lba = stoi(command1), size = stoi(command2);
-				if (size < 0)
-				{
-					changeLBAandSIZE(lba, size);
-				}
-
-				int cycle = size / 10;
-				int cycleSize = 10;
-				int remainSize = size;
-
-				for (int i = 0; i <= cycle; i++)
-				{
-					command = "ssd.exe E ";
-					if (remainSize < 10) cycleSize = remainSize;
-					command = command + to_string(lba) + " " + to_string(cycleSize);
-					eraseSSD(command);
-					remainSize -= 10;
-					lba += 10;
-				}
+			    command = "ssd.exe E ";
+			    if (remainSize < 10) cycleSize = remainSize;
+			    command = command + to_string(lba) + " " + to_string(cycleSize);
+			    eraseSSD(command);
+			    remainSize -= 10;
 			}
+		    }
 		}
 		catch (invalid_argument& e)
 		{
-			cout << "error message : " << e.what() << endl;
+	  	    cout << "error message : " << e.what() << endl;
 		}
 	}
 	void run(string command1 = "", string command2 = "") override
@@ -310,3 +341,4 @@ public:
 		return;
 	}
 };
+

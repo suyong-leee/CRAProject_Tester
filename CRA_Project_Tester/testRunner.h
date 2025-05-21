@@ -22,6 +22,7 @@ public:
 
 		OPERATOR_EXIT,
 		OPERATOR_HELP,
+		OPERATOR_FLUSH,
 
 		SCENARIO_1,
 		SCENARIO_2,
@@ -47,6 +48,8 @@ public:
 
 		operators[SCENARIO_4] = new SSDTest_EraseAndWriteAging;
 		operators[FULL_SCENARIO] = new SSDTest_FullScenario;
+
+		operators[OPERATOR_FLUSH] = new Flush;
 	}
 	bool RunCommand()
 	{
@@ -100,11 +103,13 @@ private:
 		else if (command == "1_" || command == "1_FullWriteAndReadCompare") return SCENARIO_1;
 		else if (command == "2_" || command == "2_PartialLBAWrite") return SCENARIO_2;
 		else if (command == "3_" || command == "3_WriteReadAging") return SCENARIO_3;
-
+	
+		else if (command == "flush") return OPERATOR_FLUSH;
 		else if (command == "erase") return OPERATOR_ERASE;
 		else if (command == "erase_range") return OPERATOR_ERASE_RANGE;
 
 		else if (command == "4_" || command == "4_EraseAndWriteAging") return SCENARIO_4;
+
 		else if (command.find(".txt") != string::npos) return FULL_SCENARIO;
 
 		else return -1;
