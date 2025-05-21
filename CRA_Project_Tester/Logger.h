@@ -16,6 +16,11 @@ public:
 		static Logger instance("latest.log");
 		return instance;
 	}
+	enum Logtype {
+		NORMAL = 0,
+		RUNNER = 1,
+		RUNNER_EXCEPT = 3,
+	};
 
 	void print(std::string function , std::string msg);
 	void findUntilFile(std::vector<std::filesystem::directory_entry>& logFiles);
@@ -29,7 +34,7 @@ private:
 	Logger(const Logger&) = delete;       // 복사 방지
 	Logger& operator=(const Logger&) = delete;
 	std::string logFileName ; 
-	int Default = 0;
+	int Default = NORMAL;
 };
 
 #define LOG(msg) Logger::getInstance().print(__FUNCTION__, msg)

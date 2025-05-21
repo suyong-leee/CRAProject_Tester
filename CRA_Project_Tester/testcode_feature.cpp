@@ -215,15 +215,15 @@ TEST(mainfunction, help2)
 
     Help help;
 
-    std::string expectResult;
-    expectResult = "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민\n";
-    expectResult.append("How to use CMD\n");
-    expectResult.append("read (address) : (address)의 데이터를 읽음\n");
-    expectResult.append("write (address) (data) : (address)에 (data)를 씀\n");
-    expectResult.append("fullread : 모든 데이터를 읽음\n");
-    expectResult.append("fullwrite (data) : 모든 주소에 (data)를 씀\n");
-    expectResult.append("exit : 종료\n");
-    expectResult.append("help : 도움말\n");
+    std::string expectResult =
+        "Team Approve : 고아라 이동건 이서영 이수용 이용한 한상민\n"
+        "How to use CMD\n"
+        "read (address) : (address)의 데이터를 읽음\n"
+        "write (address) (data) : (address)에 (data)를 씀\n"
+        "fullread : 모든 데이터를 읽음\n"
+        "fullwrite (data) : 모든 주소에 (data)를 씀\n"
+        "exit : 종료\n"
+        "help : 도움말\n";
 
     help.run();
     std::cout.rdbuf(old);
