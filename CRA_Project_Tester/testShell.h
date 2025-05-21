@@ -3,6 +3,8 @@
 #include <fstream>
 #include <string>
 #include <cstdio>
+#define MAX_LBA 99
+
 using namespace std;
 class ITestOperation
 {
@@ -56,9 +58,9 @@ public:
 				size = end + 1;
 			}
 		}
-		else if (lba + size -1 > 99)
+		else if (lba + size -1 > MAX_LBA)
 		{
-			size = 99 - lba + 1;
+			size = MAX_LBA - lba + 1;
 		}
 		
 	}
