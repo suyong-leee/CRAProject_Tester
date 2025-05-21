@@ -78,18 +78,17 @@ class Flush : public ITestOperation
 {
 public:
 
-	void flush(string command)
-	{
-
-		SSDCommandExecutor::runCommand(command);
-
-	}
 	void run(string command1 = "", string command2 = "") override
 	{
 		string command = "ssd.exe F";
-
-		flush(command);
+		flushSSD(command);
 	}
+
+	void flushSSD(string command)
+	{
+		SSDCommandExecutor::runCommand(command);
+	}
+	
 };
 
 
@@ -97,12 +96,50 @@ public:
 class Erase : public ITestOperation
 {
 public:
+
+	void run(string command1 = "", string command2 = "") override
+	{
+		erase(command1, command2);
+		return;
+	}
 	
-	
+	void erase(string command1, string command2)
+	{
+		try
+		{
+			if (Validator::checkLBA(command1))
+			{
+				string command;
+				int lba = stoi(command1), size = stoi(command2);
+
+				changeLBAandSIZE(lba, size);
+
+
+				int cycle = size / ERASE_BLOCK_SIZE;
+				int cycleSize = ERASE_BLOCK_SIZE;
+				int remainSize = size;
+
+				for (int i = 0; i <= cycle; i++)
+				{
+					command = "ssd.exe E ";
+					if (remainSize < ERASE_BLOCK_SIZE) cycleSize = remainSize;
+					command = command + to_string(lba) + " " + to_string(cycleSize);
+					eraseSSD(command);
+					remainSize -= ERASE_BLOCK_SIZE;
+				}
+			}
+		}
+		catch (invalid_argument& e)
+		{
+			LOG("error message : " + string(e.what()) + "\n");
+		}
+	}
+
 	void eraseSSD(string command)
 	{
 		SSDCommandExecutor::runCommand(command);
 	}
+
 	void changeLBAandSIZE(int& lba, int& size)
 	{
 		if (size < 0)
@@ -122,48 +159,19 @@ public:
 		}
 		
 	}
-	void erase(string command1, string command2)
-	{
-		try
-		{
-		    if (Validator::checkLBA(command1))
-		    {
-		        string command;
-		        int lba = stoi(command1), size = stoi(command2);
-				
-				changeLBAandSIZE(lba, size);
-
-
-		    	int cycle = size / ERASE_BLOCK_SIZE;
-				int cycleSize = ERASE_BLOCK_SIZE;
-				int remainSize = size;
-
-			for (int i = 0; i <= cycle; i++)
-			{
-			    command = "ssd.exe E ";
-			    if (remainSize < ERASE_BLOCK_SIZE) cycleSize = remainSize;
-			    command = command + to_string(lba) + " " + to_string(cycleSize);
-			    eraseSSD(command);
-			    remainSize -= ERASE_BLOCK_SIZE;
-			}
-		    }
-		}
-		catch (invalid_argument& e)
-		{
-	  	    cout << "error message : " << e.what() << endl;
-		}
-	}
-	void run(string command1 = "", string command2 = "") override
-	{
-		erase(command1, command2);
-		return;
-	}
 
 };
 class EraseRange : public Erase
 {
 public:
+
 	void run(string command1 = "", string command2 = "") override
+	{
+		eraseRangeSSD(command1, command2);
+		return;
+	}
+
+	void eraseRangeSSD(string command1, string command2)
 	{
 		try
 		{
@@ -177,9 +185,8 @@ public:
 		}
 		catch (invalid_argument& e)
 		{
-			cout << "error message : " << e.what() << endl;
+			LOG("error message : " + string(e.what()) + "\n");
 		}
-		return;
 	}
 
 };
@@ -193,6 +200,26 @@ public:
 	    read(command1);
         return;
     }
+
+	virtual string read(string address)
+	{
+
+		string result = "";
+
+		try
+		{
+			if (Validator::checkLBA(address))
+			{
+				result = readSSD(address);
+			}
+		}
+		catch (invalid_argument& e)
+		{
+			LOG("error message : " + string(e.what()) + "\n");
+		}
+		return result;
+	}
+
 	string readSSD(string address)
 	{
 		string result = "";
@@ -206,39 +233,26 @@ public:
 		return result;
 	}
 
-    virtual string read(string address)
-    {
-
-		string result = "";
-
-		try
-		{
-			if (Validator::checkLBA(address))
-			{
-				result = readSSD(address);
-			}
-		}
-		catch (invalid_argument& e)
-		{
-			LOG("error message : %s\n", e.what());
-			cout << "error message : " << e.what() << endl;
-		}
-		return result;
-    }
-
 };
 
 class FullRead : public Read {
 
 public:
+
     void run(string command1 = "", string command2 = "") override
     {
-        for (int i = 0; i < FULL_READ_SIZE; i++)
-        {
-	        string lba = to_string(i);
-	        read(lba);
-		}
+		fullread();
+		read;
     }
+
+	void fullread()
+	{
+		for (int i = 0; i < FULL_READ_SIZE; i++)
+		{
+			string lba = to_string(i);
+			read(lba);
+		}
+	}
 
 };
 
@@ -267,6 +281,7 @@ public:
 	{
 		write(command1, command2);
 	}
+
 	void write(string address, string data)
 	{
 		try
@@ -277,11 +292,10 @@ public:
 		}
 		catch (invalid_argument& e)
 		{
-			LOG("error message : %s", e.what());
+			LOG("error message : " + string(e.what()) + "\n");
 		}
 		return;
 	}
-
 
 	virtual void writeSSD(string address, string data)
 	{
@@ -299,10 +313,12 @@ private:
 class FullWrite : public Write
 {
 public:
+
 	void run(string command1 = "", string command2 = "") override
 	{
 		fullWrite(command1);
 	}
+
 	void fullWrite(string data)
 	{
 		try
@@ -315,7 +331,7 @@ public:
 		}
 		catch (invalid_argument& e)
 		{
-			cout << "error message : " << e.what() << endl;
+			LOG("error message : " + string(e.what()) + "\n");
 		}
 		return;
 	}
