@@ -35,7 +35,7 @@ void Logger::print(string function, string msg)
 	{
 		logFile << oss.str();
 	}
-	if (Default != 3) 
+	if (Default != RUNNER_EXCEPT) 
 	{
 		std::cout << oss.str();
 	}
@@ -105,7 +105,7 @@ string Logger::getNewfileName(tm& localTime)
 ostringstream Logger::getprintFormat(tm& localTime, string& function, string& msg)
 {
 	ostringstream oss;
-	if (Default == 0)
+	if (Default == NORMAL)
 	{
 		oss << "[" << setw(2) << setfill('0') << (localTime.tm_year % 100) << "."
 			<< setw(2) << setfill('0') << (localTime.tm_mon + 1) << "."

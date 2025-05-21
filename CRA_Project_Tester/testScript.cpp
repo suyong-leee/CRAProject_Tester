@@ -100,7 +100,7 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		else if (tsname.find("4_") != string::npos) scenario = new SSDTest_EraseAndWriteAging(new Write, new Read, new Erase);
 		else
 		{
-			Logger::getInstance().setLogType(0);
+			Logger::getInstance().setLogType(Logger::NORMAL);
 			fclose(f);
 			throw std::exception();
 		}
@@ -109,25 +109,25 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		{
 			if (!tsname.empty() && tsname.back() == '\n')    tsname.pop_back();
 			LOG(tsname+"   ___   Run... ");
-			Logger::getInstance().setLogType(3);
+			Logger::getInstance().setLogType(Logger::RUNNER_EXCEPT);
 			scenario->run("", "");
-			Logger::getInstance().setLogType(1);
+			Logger::getInstance().setLogType(Logger::RUNNER);
 			LOG("Pass\n");
 
 			delete scenario;
 		}
 		catch (exception& e)
 		{
-			Logger::getInstance().setLogType(1);
+			Logger::getInstance().setLogType(Logger::RUNNER);
 			LOG("FAIL!\n");
 
-			Logger::getInstance().setLogType(0);
+			Logger::getInstance().setLogType(Logger::NORMAL);
 			fclose(f);
 			throw std::exception();
 		}
 	}
 
-	Logger::getInstance().setLogType(0);
+	Logger::getInstance().setLogType(Logger::NORMAL);
 	fclose(f);
 }
 
