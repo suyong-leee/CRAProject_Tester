@@ -27,3 +27,20 @@ bool ends_with(const std::string& str, const std::string& suffix) {
 		return false;
 	}
 }
+
+void removeFile(std::string& filename)
+{
+	if (std::remove(filename.c_str()) == 0) {
+		std::cout << filename << " deleted successfully.\n";
+	}
+}
+
+void makeFile(std::string& filename)
+{
+	std::ofstream logFile(filename);
+	if (logFile.is_open()) {
+		logFile << "This is a log entry." << std::endl;
+		logFile.close();
+		std::cout << "Log written to " << filename << "\n";
+	}
+}
