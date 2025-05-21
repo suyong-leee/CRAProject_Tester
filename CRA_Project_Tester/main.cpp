@@ -4,13 +4,10 @@
 #include "testRunner.h"
 #include "testScript.h"
 #include <string>
-
-#define __DEBUG__ (1)
-
 using namespace std;
 using namespace testing;
 
-#if (__DEBUG__ == 1)
+#if defined(_DEBUG)
 int main()
 {
     testing::InitGoogleMock();
