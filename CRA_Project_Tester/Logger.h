@@ -18,10 +18,12 @@ public:
 	}
 
 	void print(std::string function , std::string msg);
+	void findUntilFile(std::vector<std::filesystem::directory_entry>& logFiles);
+	void checkFileSize(std::ifstream& file, tm& localTime, std::error_code& ec);
 	void setLogType(int type);
 	std::string getNewfileName( tm& localTime);
 	std::ostringstream getprintFormat(tm& localTime, std::string& function, std::string& msg);
-
+	void makeZip(std::vector<std::filesystem::directory_entry>& logFiles, std::error_code& ec);
 private:
 	Logger(const std::string& filename);  // private 생성자
 	Logger(const Logger&) = delete;       // 복사 방지
