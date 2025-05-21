@@ -40,7 +40,8 @@ public:
 
 class SSDCommandExecutor {
 public:
-	static bool runCommand(const string& command) {
+	static bool runCommand(const string& param) {
+		string command = "ssd.exe " + param;
 		FILE* pipe = _popen(command.c_str(), "r");
 		if (!pipe) {
 			LOG("[ERROR] Failed to execute: " + command);
@@ -80,8 +81,8 @@ public:
 
 	void run(string command1 = "", string command2 = "") override
 	{
-		string command = "ssd.exe F";
-		flushSSD(command);
+		const string flushCmd = "F";
+		flushSSD(flushCmd);
 	}
 
 	void flushSSD(string command)
@@ -109,7 +110,6 @@ public:
 		{
 			if (Validator::checkLBA(command1))
 			{
-				string command;
 				int lba = stoi(command1), size = stoi(command2);
 
 				changeLBAandSIZE(lba, size);
@@ -121,10 +121,14 @@ public:
 
 				for (int i = 0; i <= cycle; i++)
 				{
-					command = "ssd.exe E ";
 					if (remainSize < ERASE_BLOCK_SIZE) cycleSize = remainSize;
-					command = command + to_string(lba) + " " + to_string(cycleSize);
+					
+					const string eraseCmd = "E";
+					string command = eraseCmd + " " + to_string(lba) + " " + to_string(cycleSize);
+
 					eraseSSD(command);
+
+					lba += ERASE_BLOCK_SIZE;
 					remainSize -= ERASE_BLOCK_SIZE;
 				}
 			}
@@ -137,6 +141,7 @@ public:
 
 	void eraseSSD(string command)
 	{
+		cout << command << endl;
 		SSDCommandExecutor::runCommand(command);
 	}
 
@@ -159,7 +164,7 @@ public:
 		}
 		
 	}
-
+	
 };
 class EraseRange : public Erase
 {
@@ -223,7 +228,8 @@ public:
 	string readSSD(string address)
 	{
 		string result = "";
-		string command = "ssd.exe R " + address;
+		const string readCmd = "R";
+		string command = readCmd + " " + address;
 
 		SSDCommandExecutor::runCommand(command);
 		result = SSDCommandExecutor::runReadOutput("ssd_output.txt");
@@ -299,10 +305,9 @@ public:
 
 	virtual void writeSSD(string address, string data)
 	{
-		const char* exePath = "ssd";
-		const char* writeCmd = "W";
+		const string writeCmd = "W";
+		string command = writeCmd + " " + address + " " + data;
 
-		std::string command = std::string("\"") + exePath + " " + writeCmd + " " + address + " " + data;
 		SSDCommandExecutor::runCommand(command);
 		return;
 	}
