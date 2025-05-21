@@ -5,7 +5,9 @@
 #include <cstdio>
 #include "Logger.h"
 
-#define MAX_LBA 99
+constexpr int MAX_LBA = 99;
+constexpr int ERASE_BLOCK_SIZE = 10;
+constexpr int FULL_READ_SIZE = 100;
 
 using namespace std;
 class ITestOperation
@@ -97,20 +99,20 @@ public:
 		    {
 		        string command;
 		        int lba = stoi(command1), size = stoi(command2);
-			
-    	  	        changeLBAandSIZE(lba, size);
-			    
-		    	int cycle = size / 10;
-			int cycleSize = 10;
-			int remainSize = size;
+				
+				changeLBAandSIZE(lba, size);
+
+		    	int cycle = size / ERASE_BLOCK_SIZE;
+				int cycleSize = ERASE_BLOCK_SIZE;
+				int remainSize = size;
 
 			for (int i = 0; i <= cycle; i++)
 			{
 			    command = "ssd.exe E ";
-			    if (remainSize < 10) cycleSize = remainSize;
+			    if (remainSize < ERASE_BLOCK_SIZE) cycleSize = remainSize;
 			    command = command + to_string(lba) + " " + to_string(cycleSize);
 			    eraseSSD(command);
-			    remainSize -= 10;
+			    remainSize -= ERASE_BLOCK_SIZE;
 			}
 		    }
 		}
@@ -226,7 +228,7 @@ class FullRead : public Read {
 public:
     void run(string command1 = "", string command2 = "") override
     {
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < FULL_READ_SIZE; i++)
         {
 	        string lba = to_string(i);
 	        read(lba);
