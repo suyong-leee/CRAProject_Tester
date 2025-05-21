@@ -100,9 +100,8 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		else if (tsname.find("4_") != string::npos) scenario = new SSDTest_EraseAndWriteAging(new Write, new Read, new Erase);
 		else
 		{
-			Logger::getInstance().setLogType(Logger::NORMAL);
-			fclose(f);
-			throw std::exception();
+			LOG(tsname+" is invalid test script\n");
+			break;
 		}
 
 		try
@@ -120,10 +119,7 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		{
 			Logger::getInstance().setLogType(Logger::RUNNER);
 			LOG("FAIL!\n");
-
-			Logger::getInstance().setLogType(Logger::NORMAL);
-			fclose(f);
-			throw std::exception();
+			break;
 		}
 	}
 

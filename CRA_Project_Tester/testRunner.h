@@ -66,7 +66,15 @@ public:
 
 		currentOperation = getOperator(operationOrder);
 
-		currentOperation->run(parameter[0], parameter[1]);
+		try
+		{
+			currentOperation->run(parameter[0], parameter[1]);
+			LOG("Pass\n");
+		}
+		catch(exception & e)
+		{
+			LOG("Fail\n");
+		}
 
 		return true;
 	}
