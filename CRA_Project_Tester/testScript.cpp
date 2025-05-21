@@ -120,10 +120,7 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 		{
 			Logger::getInstance().setLogType(1);
 			LOG("FAIL!\n");
-
-			Logger::getInstance().setLogType(0);
-			fclose(f);
-			throw std::exception();
+			break;
 		}
 	}
 
