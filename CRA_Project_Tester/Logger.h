@@ -18,7 +18,6 @@ public:
 	}
 
 	void print(std::string function , std::string msg);
-	bool IsScript();
 	void findUntilFile(std::vector<std::filesystem::directory_entry>& logFiles);
 	void checkFileSize(std::ifstream& file, tm& localTime, std::error_code& ec);
 	void setLogType(int type);
