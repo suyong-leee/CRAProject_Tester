@@ -1,5 +1,6 @@
 ﻿#include "testShell.h"
 #include "Util.h"
+#include "Logger.h"
 #include "testScript.h"
 #include <stdexcept>
 
@@ -29,7 +30,6 @@ void SSDTest_FullWriteAndReadCompare::run(string command1, string command2)
 			if (CompareData(buffer, readBuffer)) continue;
 		}
 	}
-	cout << "PASS\n";
 
 }
 
@@ -76,8 +76,6 @@ void SSDTest_WriteReadAging::run(string param1, string param2)
 		CompareData(wdata1, mRead->read("0"));
 		CompareData(wdata2, mRead->read("99"));
 	}
-
-	cout << "PASS\n";
 }
 
 void SSDTest_EraseAndWriteAging::run(string param1, string param2)
@@ -91,8 +89,7 @@ void SSDTest_EraseAndWriteAging::run(string param1, string param2)
 	for (int loop = 0; loop < 30; loop++)
 		for(int addr = 2; addr <= 98 ; addr += 2)
 		    WriteAndErase(addr);
-	
-	cout << "PASS\n";
+  
 }
 
 void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
@@ -110,7 +107,7 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 	wdata = createRandomString();
 	mWrite->run(to_string(start_addr), wdata);
 	rdata = mRead->read(to_string(start_addr));
-	CompareData(wdata, rdata);
+	CompareData(wdata, rdata);	
 
 	// s3. erase
 	mErase->run(to_string(start_addr), "3");
@@ -119,7 +116,7 @@ void SSDTest_EraseAndWriteAging::WriteAndErase(int start_addr)
 void SSDTest_FullScenario::run(string file_name, string param2)
 {
 	FILE* f;
-
+	Logger::getInstance().setLogType(1);
 	fopen_s(&f, file_name.c_str(), "r");
 	if (!f) throw std::exception();
 
@@ -141,18 +138,20 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 
 		try
 		{
-			cout << "Run... ";
+			LOG("Run... ");
 			scenario->run("", "");
-			cout << "Pass" << endl;
+			LOG("Pass\n");
 			delete scenario;
 		}
 		catch (exception& e)
 		{
-			cout << "FAIL!" << endl;
+			LOG("FAIL!\n");
 			fclose(f);
+			Logger::getInstance().setLogType(0);
 			throw std::exception();
 		}
 	}
-
 	fclose(f);
+	Logger::getInstance().setLogType(0);
+
 }

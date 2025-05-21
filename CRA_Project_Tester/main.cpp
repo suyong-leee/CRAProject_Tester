@@ -1,6 +1,6 @@
 #include "gmock/gmock.h"
 #include <iostream>
-
+#include "Logger.h"
 #include "testRunner.h"
 
 #define __DEBUG__ (1)

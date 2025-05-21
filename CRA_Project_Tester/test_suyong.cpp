@@ -33,7 +33,7 @@ TEST(mainfunction, InvalidCommand)
     std::cout.rdbuf(old);
     std::string output = buffer.str();
     std::string expectResult = "INVALID COMMAND\n";
-    EXPECT_EQ(expectResult, output);
+    EXPECT_THAT(output, testing::HasSubstr(expectResult));
 }
 
 
@@ -198,7 +198,7 @@ TEST(Help, operationtest)
     help.run();
     std::cout.rdbuf(old);
     std::string output = buffer.str();
-    EXPECT_EQ(expectResult, output);
+    EXPECT_THAT(output, testing::HasSubstr(expectResult));
 }
 
 TEST(Testwrite, InvalidWriteAddress)

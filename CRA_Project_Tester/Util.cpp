@@ -15,7 +15,6 @@ bool CompareData(string  writeData, string readData)
 		return true;
 	}
 	else {
-		std::cout << "FAIL\n";
 		throw exception("Compare Failed\n");
 	}
 }
