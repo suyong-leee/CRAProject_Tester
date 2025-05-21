@@ -222,13 +222,13 @@ TEST(Testwrite, InvalidWriteData2)
 class MockWriter : public Write
 {
 public:
-    MOCK_METHOD(void, callSSD, (string, string), (override));
+    MOCK_METHOD(void, writeSSD, (string, string), (override));
 };
 
 class MockFullWriter : public FullWrite
 {
 public:
-    MOCK_METHOD(void, callSSD, (string, string), (override));
+    MOCK_METHOD(void, writeSSD, (string, string), (override));
 };
 
 TEST(Testwrite, normalWrite)
@@ -236,7 +236,7 @@ TEST(Testwrite, normalWrite)
     MockWriter writer;
     string address = "30";
     string data = "0xAAAAAAAA";
-    EXPECT_CALL(writer, callSSD(address, data))
+    EXPECT_CALL(writer, writeSSD(address, data))
         .Times(1);
 
     writer.run(address, data);
@@ -247,7 +247,7 @@ TEST(Testwrite, InvalidWrite)
     MockWriter writer;
     string address = "30";
     string data = "0xAAAAAG";
-    EXPECT_CALL(writer, callSSD(address, data))
+    EXPECT_CALL(writer, writeSSD(address, data))
         .Times(0);
 
     writer.run(address, data);
@@ -258,7 +258,7 @@ TEST(Testwrite, InvalidWrite2)
     MockWriter writer;
     string address = "";
     string data = "0xAAAAAG";
-    EXPECT_CALL(writer, callSSD(address, data))
+    EXPECT_CALL(writer, writeSSD(address, data))
         .Times(0);
 
     writer.run(address, data);
@@ -268,7 +268,7 @@ TEST(TestFullWrite, NormalOperation)
 {
     MockFullWriter writer;
     string data = "0xAAAAAAAA";
-    EXPECT_CALL(writer, callSSD(_, data))
+    EXPECT_CALL(writer, writeSSD(_, data))
         .Times(100);
 
     writer.run(data);
