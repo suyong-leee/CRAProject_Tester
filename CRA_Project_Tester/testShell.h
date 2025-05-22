@@ -29,6 +29,10 @@ public:
 		{
 			throw invalid_argument("16진수 8자리만 입력가능");
 		}
+		if (data[0] != '0' || data[1] != 'x')
+		{
+			throw invalid_argument("16진수 8자리만 입력가능");
+		}
 		for (int i = 2; i < data.size(); i++)
 		{
 			if ((data[i] >= '0' && data[i] <= '9') || (data[i] >= 'A' && data[i] <= 'F')) continue;
