@@ -54,6 +54,52 @@ protected:
 	}
 };
 
+class SSDTestFixturePartialLBAWrite : public ::testing::Test {
+protected:
+	MockWriteDriver_ mockWrite;
+	MockReadDriver_ mockRead;
+	SSDTest_PartialLBAWrite* ssd;
+
+	void SetUp() override {
+		ssd = new SSDTest_PartialLBAWrite(&mockWrite, &mockRead);
+	}
+
+	void TearDown() override {
+		delete ssd;
+	}
+};
+
+class SSDTestFixtureWriteReadAging : public ::testing::Test {
+protected:
+	MockWriteDriver_ mockWrite;
+	MockReadDriver_ mockRead;
+	SSDTest_WriteReadAging* ssd;
+
+	void SetUp() override {
+		ssd = new SSDTest_WriteReadAging(&mockWrite, &mockRead);
+	}
+
+	void TearDown() override {
+		delete ssd;
+	}
+};
+
+class SSDTestFixtureEraseAndWriteAging : public ::testing::Test {
+protected:
+	MockWriteDriver_ mockWrite;
+	MockReadDriver_ mockRead;
+	MockEraseDriver_ mockErase;
+	SSDTest_EraseAndWriteAging* ssd;
+
+	void SetUp() override {
+		ssd = new SSDTest_EraseAndWriteAging(&mockWrite, &mockRead, &mockErase);
+	}
+
+	void TearDown() override {
+		delete ssd;
+	}
+};
+
 class LoggerTest : public ::testing::Test {
 protected:
 	std::string logFilename = "latest.log";
@@ -78,6 +124,60 @@ TEST_F(SSDTestFixtureFullWriteAndReadCompare, FullWriteAndReadCompareFailTest) {
 
 TEST_F(SSDTestFixtureFullWriteAndReadCompare, FullWriteAndReadCompareTest) {
 
+	EXPECT_CALL(mockWrite, run(_, _))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address, std::string data) {
+		mockWrite.writtenData[address] = data;
+			});
+
+
+	EXPECT_CALL(mockRead, read(_))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address) {
+		return mockWrite.writtenData[address];
+			});
+
+	ssd->run("", "");
+}
+
+TEST_F(SSDTestFixturePartialLBAWrite, PartialLBAWrite)
+{
+	EXPECT_CALL(mockWrite, run(_, _))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address, std::string data) {
+		mockWrite.writtenData[address] = data;
+			});
+
+
+	EXPECT_CALL(mockRead, read(_))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address) {
+		return mockWrite.writtenData[address];
+			});
+
+	ssd->run("", "");
+}
+
+TEST_F(SSDTestFixtureWriteReadAging, WriteReadAging)
+{
+	EXPECT_CALL(mockWrite, run(_, _))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address, std::string data) {
+		mockWrite.writtenData[address] = data;
+			});
+
+
+	EXPECT_CALL(mockRead, read(_))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address) {
+		return mockWrite.writtenData[address];
+			});
+
+	ssd->run("", "");
+}
+
+TEST_F(SSDTestFixtureEraseAndWriteAging, EraseAndWriteAging)
+{
 	EXPECT_CALL(mockWrite, run(_, _))
 		.Times(::testing::AnyNumber())
 		.WillRepeatedly([this](std::string address, std::string data) {
@@ -131,8 +231,6 @@ TEST_F(LoggerTest, makeZipTest) {
 	}
 }
 
-
-
 TEST_F(LoggerTest, 10KBTest) {
 
 	const std::string filename = "latest.log";
@@ -140,94 +238,184 @@ TEST_F(LoggerTest, 10KBTest) {
 
 	std::ofstream file(filename, std::ios::binary);
 	if (file.is_open()) {
-		std::string content(fileSizeInBytes, 'A'); // 'A' ¹®ÀÚ·Î 10KB Ã¤¿ò
+		std::string content(fileSizeInBytes, 'A'); // 'A' ï¿½ï¿½ï¿½Ú·ï¿½ 10KB Ã¤ï¿½ï¿½
 		file << content;
 		file.close();
 	}
 	LOG("10KB TEST\n");
 }
 
-TEST(SDDTEST, DISABLED_PartialLBAWrite)
+TEST_F(SSDTestFixturePartialLBAWrite, PartialLBAWrite_SSD)
 {
-	MockWriteDriver_ mkwr;
-	MockReadDriver_ mkrd;
-	SSDTest_PartialLBAWrite test(&mkwr, &mkrd);
+	for (int i = 0; i < 30; i++)
+	{
+		EXPECT_CALL(mockWrite, run("4", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockWrite, run("0", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockWrite, run("3", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockWrite, run("1", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockWrite, run("2", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockRead, read("4"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+		EXPECT_CALL(mockRead, read("3"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+		EXPECT_CALL(mockRead, read("2"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+		EXPECT_CALL(mockRead, read("1"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+		EXPECT_CALL(mockRead, read("0"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+	}
 
-	EXPECT_CALL(mkwr, run("4", "0x12345678")).Times(30);
-	EXPECT_CALL(mkwr, run("0", "0x12345678")).Times(30);
-	EXPECT_CALL(mkwr, run("3", "0x12345678")).Times(30);
-	EXPECT_CALL(mkwr, run("2", "0x12345678")).Times(30);
-	EXPECT_CALL(mkwr, run("1", "0x12345678")).Times(30);
 
-	EXPECT_CALL(mkrd, read("0")).Times(30);
-	EXPECT_CALL(mkrd, read("1")).Times(30);
-	EXPECT_CALL(mkrd, read("2")).Times(30);
-	EXPECT_CALL(mkrd, read("3")).Times(30);
-	EXPECT_CALL(mkrd, read("4")).Times(30);
-
-	test.run("", "");
+	ssd->run("", "");
 }
 
-TEST(SDDTEST, DISABLED_PartialLBAWrite_exception)
+TEST_F(SSDTestFixturePartialLBAWrite, PartialLBAWrite_SSD_exception)
 {
-	MockWriteDriver_ mkwr;
-	MockReadDriver_ mkrd;
-	SSDTest_PartialLBAWrite test(&mkwr, &mkrd);
+	for (int i = 0; i < 30; i++)
+	{
+		EXPECT_CALL(mockWrite, run("4", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockWrite, run("0", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockWrite, run("3", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockWrite, run("1", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockWrite, run("2", _))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address, std::string data) {
+			mockWrite.writtenData[address] = data;
+				});
+		EXPECT_CALL(mockRead, read("4"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+		EXPECT_CALL(mockRead, read("3"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+		EXPECT_CALL(mockRead, read("2"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+		EXPECT_CALL(mockRead, read("1"))
+			.Times(::testing::AnyNumber())
+			.WillRepeatedly([this](std::string address) {
+			return mockWrite.writtenData[address];
+				});
+		EXPECT_CALL(mockRead, read(_))
+			.Times(::testing::AnyNumber())
+			.WillOnce(::testing::Return("0x12341234"));
+	}
 
-	EXPECT_CALL(mkwr, run("4", "0x12345678"));
-	EXPECT_CALL(mkwr, run("0", "0x12345678"));
-	EXPECT_CALL(mkwr, run("3", "0x12345678"));
-	EXPECT_CALL(mkwr, run("2", "0x12345678"));
-	EXPECT_CALL(mkwr, run("1", "0x12345678"));
 
-	EXPECT_CALL(mkrd, read("0"))
-		.WillRepeatedly(Return(string("0x12345678")));
-	EXPECT_CALL(mkrd, read("1"))
-		.WillRepeatedly(Return(string("0x12345678")));
-	EXPECT_CALL(mkrd, read("2"))
-		.WillRepeatedly(Return(string("0x12345678")));
-	EXPECT_CALL(mkrd, read("3"))
-		.WillRepeatedly(Return(string("0x12345678")));
-	EXPECT_CALL(mkrd, read("4"))
-		.WillRepeatedly(Return(string("0x11111111")));
-
-	EXPECT_THROW(test.run("", ""), exception);
+	EXPECT_THROW(ssd->run("", ""), exception);
 }
 
-TEST(SDDTEST, DISABLED_WriteReadAging)
+
+TEST_F(SSDTestFixtureWriteReadAging, WriteReadAging_SSD)
 {
-	MockWriteDriver_ mkwr;
-	MockReadDriver_ mkrd;
-	SSDTest_WriteReadAging test(&mkwr, &mkrd);
+	EXPECT_CALL(mockWrite, run("0", _))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address, std::string data) {
+		mockWrite.writtenData[address] = data;
+			});
+	EXPECT_CALL(mockWrite, run("99", _))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address, std::string data) {
+		mockWrite.writtenData[address] = data;
+			});
 
-	EXPECT_CALL(mkwr, run("0", _)).Times(200);
-	EXPECT_CALL(mkwr, run("99", _)).Times(200);
+	EXPECT_CALL(mockRead, read("0"))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address) {
+		return mockWrite.writtenData[address];
+			});
 
-	EXPECT_CALL(mkrd, read("0"))
-		.Times(200)
-		.WillRepeatedly(Return(string("0x12345678")));
-	EXPECT_CALL(mkrd, read("99"))
-		.Times(200)
-		.WillRepeatedly(Return(string("0x12345678")));
+	EXPECT_CALL(mockRead, read("99"))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address) {
+		return mockWrite.writtenData[address];
+			});
 
-	test.run("", "");
+	ssd->run("", "");
 }
 
-TEST(SDDTEST, DISABLED_WriteReadAging_exception)
+TEST_F(SSDTestFixtureWriteReadAging, WriteReadAging_SSD_exception)
 {
-	MockWriteDriver_ mkwr;
-	MockReadDriver_ mkrd;
-	SSDTest_WriteReadAging test(&mkwr, &mkrd);
+	EXPECT_CALL(mockWrite, run("0", _))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address, std::string data) {
+		mockWrite.writtenData[address] = data;
+			});
+	EXPECT_CALL(mockWrite, run("99", _))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address, std::string data) {
+		mockWrite.writtenData[address] = data;
+			});
 
-	EXPECT_CALL(mkwr, run("0", _));
-	EXPECT_CALL(mkwr, run("99", _));
+	EXPECT_CALL(mockRead, read("0"))
+		.Times(::testing::AnyNumber())
+		.WillRepeatedly([this](std::string address) {
+		return mockWrite.writtenData[address];
+			});
+	EXPECT_CALL(mockRead, read("99"))
+		.Times(::testing::AnyNumber())
+		.WillOnce(::testing::Return("0x12341234"));
 
-	EXPECT_CALL(mkrd, read("0"))
-		.WillRepeatedly(Return(string("0x12345678")));
-	EXPECT_CALL(mkrd, read("99"))
-		.WillRepeatedly(Return(string("0x11111111")));
+	EXPECT_THROW(ssd->run("", ""), exception);
 
-	EXPECT_THROW(test.run("", ""), exception);
 }
 
 TEST(SDDTEST, DISABLED_EraseAndWriteAging)
