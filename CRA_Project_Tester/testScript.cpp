@@ -84,7 +84,11 @@ void SSDTest_FullScenario::run(string file_name, string param2)
 {
 	FILE* f;
 	fopen_s(&f, file_name.c_str(), "r");
-	if (!f) throw std::exception();
+	if (!f)
+	{
+		LOG("Invalid File name. Can't find it\n");
+		throw std::exception();
+	}
 
 	Logger::getInstance().setLogType(1);
 
