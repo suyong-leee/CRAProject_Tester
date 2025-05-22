@@ -219,6 +219,7 @@ public:
 		catch (invalid_argument& e)
 		{
 			LOG("error message : " + string(e.what()) + "\n");
+			throw exception();
 		}
 		return result;
 	}
@@ -297,6 +298,7 @@ public:
 		catch (invalid_argument& e)
 		{
 			LOG("error message : " + string(e.what()) + "\n");
+			throw exception();
 		}
 		return;
 	}
@@ -335,6 +337,7 @@ public:
 		catch (invalid_argument& e)
 		{
 			LOG("error message : " + string(e.what()) + "\n");
+			throw exception();
 		}
 		return;
 	}
